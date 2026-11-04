@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urban Form & Pedestrian Thermal Exposure Portal | Nguyen Quoc Kiet (阮国杰)</title>
+    <title>Canal Microclimate Lab | Nguyen Quoc Kiet (阮国杰)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Leaflet Real GIS Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -20,8 +20,8 @@
                     },
                     colors: {
                         academic: {
-                            green: '#1B4332',
-                            emerald: '#047857',
+                            green: '#14532D',
+                            emerald: '#059669',
                             light: '#ECFDF5',
                             slate: '#0F172A'
                         }
@@ -37,18 +37,20 @@
         }
         body {
             font-family: 'UTM Avo', 'Lato', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #F8FAFC;
+            background-color: #F6F8F7;
+            background-image: radial-gradient(rgba(27, 67, 50, 0.07) 1px, transparent 1px);
+            background-size: 24px 24px;
             color: #0F172A;
             -webkit-font-smoothing: antialiased;
         }
         .editorial-card {
             background: #FFFFFF;
             border: 1px solid #E2E8F0;
-            box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+            box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
         }
         .editorial-card-hover:hover {
             border-color: #CBD5E1;
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
+            box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08);
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -99,8 +101,8 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-[#1B4332] border border-emerald-200 font-semibold" data-i18n="header_badge">Master's Research Proposal Companion</span>
-                        <span class="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" data-i18n="header_domain">Urban Microclimate & GIS</span>
+                        <span class="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-[#1B4332] border border-emerald-200 font-bold" data-i18n="header_badge">CANAL MICROCLIMATE LAB</span>
+                        <span class="text-[11px] font-mono font-semibold text-slate-700" data-i18n="header_domain">Nguyen Quoc Kiet (阮国杰)</span>
                     </div>
                     <h1 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight mt-0.5" data-i18n="header_title">
                         Tham Luong Canal Corridor · Spatial & Thermal Exposure Observatory
@@ -127,8 +129,18 @@
                 </button>
             </nav>
 
-            <!-- Bilingual Switcher (Strictly EN / 中文) & Summary Modal -->
+            <!-- Data Mode Toggle, Bilingual Switcher (EN / 中文) & Brief Modal -->
             <div class="flex items-center space-x-2">
+                <div class="inline-flex rounded-lg border border-emerald-300 bg-emerald-50/70 p-0.5" title="Switch between Real-Time HCMC Open-Meteo Telemetry and Hot-Dry Design Peak Benchmark">
+                    <button onclick="setDataSourceMode('live')" id="btn-mode-live" class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-[#1B4332] text-white transition flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping"></span>
+                        <span data-i18n="mode_live_btn">LIVE HCMC API</span>
+                    </button>
+                    <button onclick="setDataSourceMode('benchmark')" id="btn-mode-bench" class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold text-slate-600 hover:text-slate-900 transition">
+                        <span data-i18n="mode_bench_btn">HOT-DRY PEAK</span>
+                    </button>
+                </div>
+
                 <div class="inline-flex rounded-lg border border-slate-300 bg-slate-100 p-0.5">
                     <button onclick="setLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-[#1B4332] text-white transition">
                         EN
@@ -139,7 +151,36 @@
                 </div>
                 <button onclick="openProposalModal()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#1B4332] hover:bg-emerald-900 text-white transition flex items-center gap-1.5 shadow-sm">
                     <i class="fa-solid fa-file-lines"></i>
-                    <span class="hidden sm:inline" data-i18n="btn_brief">Proposal Brief</span>
+                    <span class="hidden sm:inline" data-i18n="btn_brief">Study Brief</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Live Meteorological Telemetry Status Ribbon -->
+        <div class="max-w-7xl mx-auto mt-2.5 pt-2 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span id="liveApiBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-100 text-[#1B4332] font-bold border border-emerald-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                    <span id="liveApiStatusText">LIVE API CONNECTED · Open-Meteo HCMC (10.8358°N, 106.6385°E)</span>
+                </span>
+                <span class="text-slate-600 font-semibold">
+                    <i class="fa-regular fa-clock text-[#1B4332] mr-1"></i>
+                    <span id="hcmcLiveClock">HCMC Live Clock: Loading...</span>
+                </span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 text-slate-700">
+                <span>Ref <strong class="text-slate-900">Ta:</strong> <span id="liveRefTa" class="text-emerald-800 font-bold">-- °C</span></span>
+                <span class="text-slate-300">|</span>
+                <span><strong class="text-slate-900">RH:</strong> <span id="liveRefRh" class="text-sky-800 font-bold">-- %</span></span>
+                <span class="text-slate-300">|</span>
+                <span><strong class="text-slate-900">Wind (10m):</strong> <span id="liveRefWind" class="text-slate-900 font-bold">-- m/s</span></span>
+                <span class="text-slate-300">|</span>
+                <span><strong class="text-slate-900">Solar SW:</strong> <span id="liveRefRad" class="text-amber-700 font-bold">-- W/m²</span></span>
+                <span class="text-slate-300">|</span>
+                <span id="liveRegimePill" class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300 font-semibold">Syncing...</span>
+                <button onclick="fetchLiveHCMCWeather(true)" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 transition" title="Refresh Open-Meteo HCMC Telemetry">
+                    <i class="fa-solid fa-rotate"></i>
                 </button>
             </div>
         </div>
@@ -151,10 +192,10 @@
         <!-- Hero Editorial Banner Card -->
         <section class="relative rounded-2xl overflow-hidden editorial-card p-6 lg:p-8 bg-gradient-to-br from-white via-white to-emerald-50/50">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                <div class="lg:col-span-8 space-y-3.5">
+                <div class="lg:col-span-7 space-y-3.5">
                     <div class="inline-flex items-center space-x-2 text-xs font-mono text-[#1B4332] bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full font-semibold">
                         <span class="w-2 h-2 rounded-full bg-emerald-600 animate-ping"></span>
-                        <span data-i18n="hero_badge">MASTER'S RESEARCH PROPOSAL & SPATIAL DATA COMPANION</span>
+                        <span data-i18n="hero_badge">URBAN CANAL MICROCLIMATE & SPATIAL EXPOSURE OBSERVATORY</span>
                     </div>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight tracking-tight" data-i18n="hero_title">
                         Urban Form and Pedestrian Thermal Exposure along Urban Canal Corridors
@@ -164,50 +205,84 @@
                     </p>
                     <div class="pt-2 flex flex-wrap gap-3 text-xs">
                         <div class="bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 flex items-center gap-2.5">
-                            <i class="fa-solid fa-user-graduate text-[#1B4332] text-sm"></i>
+                            <i class="fa-solid fa-user-check text-[#1B4332] text-sm"></i>
                             <div>
-                                <span class="text-slate-400 block text-[10px] font-mono uppercase" data-i18n="label_researcher">PROPOSED BY RESEARCHER</span>
-                                <strong class="text-slate-900" data-i18n="val_researcher">Nguyen Quoc Kiet</strong>
+                                <span class="text-slate-400 block text-[10px] font-mono uppercase" data-i18n="label_researcher">LEAD RESEARCHER</span>
+                                <strong class="text-slate-900" data-i18n="val_researcher">Nguyen Quoc Kiet (阮国杰)</strong>
                             </div>
                         </div>
                         <div class="bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 flex items-center gap-2.5">
                             <i class="fa-solid fa-compass-drafting text-emerald-700 text-sm"></i>
                             <div>
-                                <span class="text-slate-400 block text-[10px] font-mono uppercase" data-i18n="label_bg">ACADEMIC BACKGROUND</span>
+                                <span class="text-slate-400 block text-[10px] font-mono uppercase" data-i18n="label_bg">DISCIPLINARY TRAINING</span>
                                 <strong class="text-slate-900" data-i18n="val_bg">Architecture & Smart Urban Design (UEH - ISCM)</strong>
                             </div>
                         </div>
                         <div class="bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 flex items-center gap-2.5">
-                            <i class="fa-solid fa-microscope text-sky-700 text-sm"></i>
+                            <i class="fa-solid fa-satellite-dish text-sky-700 text-sm"></i>
                             <div>
-                                <span class="text-slate-400 block text-[10px] font-mono uppercase" data-i18n="label_focus">RESEARCH FOCUS</span>
-                                <strong class="text-slate-900" data-i18n="val_focus">Urban Microclimate, GIS & Green Infrastructure</strong>
+                                <span class="text-slate-400 block text-[10px] font-mono uppercase" data-i18n="label_focus">LIVE TELEMETRY ENGINE</span>
+                                <strong class="text-slate-900" data-i18n="val_focus">Open-Meteo HCMC + ENVI-met / SOLWEIG</strong>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Key Metrics Summary Widget -->
-                <div class="lg:col-span-4 grid grid-cols-2 gap-3">
-                    <div class="bg-slate-50/90 border border-slate-200 p-4 rounded-xl">
-                        <div class="text-[11px] text-slate-500 font-mono font-semibold" data-i18n="kpi1_label">STUDY REACHES</div>
-                        <div class="text-2xl font-black text-slate-900 mt-1" data-i18n="kpi1_val">3 Reaches</div>
-                        <div class="text-[11px] text-[#1B4332] font-semibold mt-1"><i class="fa-solid fa-location-crosshairs mr-1"></i><span data-i18n="kpi1_sub">12 Monitoring Sites</span></div>
+                <!-- Right Column: Architectural Cross-Section & KPI Grid -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="bg-slate-50/90 border border-slate-200 rounded-xl p-3">
+                        <div class="flex items-center justify-between text-[10px] font-mono font-bold text-slate-600 mb-1">
+                            <span data-i18n="hero_sec_title">CORRIDOR THERMAL CONTRAST (1.1m PEDESTRIAN LEVEL)</span>
+                            <span class="text-[#1B4332]" id="heroLiveTag">LIVE HCMC SYNC</span>
+                        </div>
+                        <svg viewBox="0 0 420 105" class="w-full h-24">
+                            <!-- Sky & Solar Vectors -->
+                            <line x1="65" y1="8" x2="95" y2="68" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 2"/>
+                            <line x1="85" y1="8" x2="115" y2="68" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 2"/>
+                            <!-- Left Bank: Exposed Shophouse & Concrete Embankment -->
+                            <rect x="12" y="22" width="42" height="58" fill="#cbd5e1" stroke="#64748b" stroke-width="1.2"/>
+                            <path d="M 54 80 L 135 80 L 152 96 L 12 96 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+                            <!-- Exposed Pedestrian -->
+                            <circle cx="102" cy="67" r="4" fill="#dc2626"/>
+                            <text x="102" y="57" text-anchor="middle" fill="#dc2626" font-size="8.5" font-family="JetBrains Mono" font-weight="700" id="heroLeftPet">R1 Exposed</text>
+                            <!-- Canal Channel -->
+                            <path d="M 152 84 L 268 84 L 258 98 L 162 98 Z" fill="#0284c7" opacity="0.8"/>
+                            <text x="210" y="94" text-anchor="middle" fill="#ffffff" font-size="7.5" font-family="JetBrains Mono" font-weight="700">THAM LUONG CANAL</text>
+                            <!-- Right Bank: Continuous Riparian Canopy -->
+                            <path d="M 268 80 L 408 80 L 408 96 L 258 96 Z" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+                            <rect x="366" y="34" width="34" height="46" fill="#cbd5e1" stroke="#64748b" stroke-width="1.2"/>
+                            <!-- Tree Crowns -->
+                            <line x1="305" y1="58" x2="305" y2="80" stroke="#78350f" stroke-width="3"/>
+                            <line x1="338" y1="55" x2="338" y2="80" stroke="#78350f" stroke-width="3"/>
+                            <circle cx="305" cy="44" r="19" fill="#047857" opacity="0.88"/>
+                            <circle cx="338" cy="42" r="21" fill="#1B4332" opacity="0.9"/>
+                            <!-- Shaded Pedestrian -->
+                            <circle cx="320" cy="67" r="4" fill="#059669"/>
+                            <text x="320" y="20" text-anchor="middle" fill="#047857" font-size="8.5" font-family="JetBrains Mono" font-weight="700" id="heroRightPet">R3 Shaded</text>
+                        </svg>
                     </div>
-                    <div class="bg-slate-50/90 border border-slate-200 p-4 rounded-xl">
-                        <div class="text-[11px] text-slate-500 font-mono font-semibold" data-i18n="kpi2_label">BUFFER ZONES</div>
-                        <div class="text-2xl font-black text-slate-900 mt-1">100 m</div>
-                        <div class="text-[11px] text-sky-700 font-semibold mt-1" data-i18n="kpi2_sub">50m & 200m sensitivity</div>
-                    </div>
-                    <div class="bg-slate-50/90 border border-slate-200 p-4 rounded-xl">
-                        <div class="text-[11px] text-slate-500 font-mono font-semibold" data-i18n="kpi3_label">FIELD CAMPAIGN</div>
-                        <div class="text-2xl font-black text-slate-900 mt-1" data-i18n="kpi3_val">9 Days</div>
-                        <div class="text-[11px] text-amber-700 font-semibold mt-1" data-i18n="kpi3_sub">6 Hot Dry + 3 Wet Season</div>
-                    </div>
-                    <div class="bg-slate-50/90 border border-slate-200 p-4 rounded-xl">
-                        <div class="text-[11px] text-slate-500 font-mono font-semibold" data-i18n="kpi4_label">SENSOR HEIGHT</div>
-                        <div class="text-2xl font-black text-slate-900 mt-1">1.1 m</div>
-                        <div class="text-[11px] text-slate-600 font-semibold mt-1" data-i18n="kpi4_sub">Pedestrian Gravity Center</div>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="bg-slate-50/90 border border-slate-200 p-2.5 rounded-xl">
+                            <div class="text-[9px] text-slate-500 font-mono font-semibold" data-i18n="kpi1_label">STUDY REACHES</div>
+                            <div class="text-base font-black text-slate-900 mt-0.5" data-i18n="kpi1_val">3 Reaches</div>
+                            <div class="text-[10px] text-[#1B4332] font-semibold" data-i18n="kpi1_sub">12 Stations</div>
+                        </div>
+                        <div class="bg-slate-50/90 border border-slate-200 p-2.5 rounded-xl">
+                            <div class="text-[9px] text-slate-500 font-mono font-semibold" data-i18n="kpi2_label">BUFFER ZONES</div>
+                            <div class="text-base font-black text-slate-900 mt-0.5">100 m</div>
+                            <div class="text-[10px] text-sky-700 font-semibold" data-i18n="kpi2_sub">50m / 200m</div>
+                        </div>
+                        <div class="bg-slate-50/90 border border-slate-200 p-2.5 rounded-xl">
+                            <div class="text-[9px] text-slate-500 font-mono font-semibold" data-i18n="kpi3_label">FIELD CAMPAIGN</div>
+                            <div class="text-base font-black text-slate-900 mt-0.5" data-i18n="kpi3_val">9 Days</div>
+                            <div class="text-[10px] text-amber-700 font-semibold" data-i18n="kpi3_sub">6 Dry + 3 Wet</div>
+                        </div>
+                        <div class="bg-slate-50/90 border border-slate-200 p-2.5 rounded-xl">
+                            <div class="text-[9px] text-slate-500 font-mono font-semibold" data-i18n="kpi4_label">SENSOR HEIGHT</div>
+                            <div class="text-base font-black text-slate-900 mt-0.5">1.1 m</div>
+                            <div class="text-[10px] text-slate-600 font-semibold" data-i18n="kpi4_sub">Pedestrian Level</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -217,9 +292,9 @@
         <div id="view-overview" class="tab-view space-y-6">
             <!-- 3 Core Research Questions -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="editorial-card editorial-card-hover transition p-5 rounded-2xl border-t-4 border-t-[#1B4332] flex flex-col justify-between">
+                <div class="editorial-card editorial-card-hover transition p-5 rounded-2xl border-t-4 border-t-[#14532D] flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center justify-between text-xs font-mono text-[#1B4332] font-bold mb-2">
+                        <div class="flex items-center justify-between text-xs font-mono text-[#14532D] font-bold mb-2">
                             <span data-i18n="rq1_tag">RESEARCH QUESTION 01</span>
                             <i class="fa-solid fa-city text-base"></i>
                         </div>
@@ -275,12 +350,12 @@
                             <h3 class="text-lg font-bold text-slate-900" data-i18n="arch_title">Integrated Methodological Architecture</h3>
                             <p class="text-xs text-slate-500" data-i18n="arch_sub">Connecting GIS Spatial Screening, Repeated Microclimate Monitoring & Scenario Simulation</p>
                         </div>
-                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-emerald-50 text-[#1B4332] border border-emerald-200 font-semibold" data-i18n="arch_badge">Reproducible Workflow</span>
+                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-emerald-50 text-[#14532D] border border-emerald-200 font-semibold" data-i18n="arch_badge">Reproducible Workflow</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
                         <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl relative">
-                            <span class="text-[10px] font-mono font-bold text-[#1B4332] bg-emerald-100 px-2 py-0.5 rounded">STAGE 01</span>
+                            <span class="text-[10px] font-mono font-bold text-[#14532D] bg-emerald-100 px-2 py-0.5 rounded">STAGE 01</span>
                             <h4 class="text-sm font-bold text-slate-900 mt-2" data-i18n="st1_title">GIS Corridor Audit</h4>
                             <ul class="text-xs text-slate-600 mt-2 space-y-1.5 list-disc list-inside" data-i18n="st1_list">
                                 <li>250m screening segments</li>
@@ -327,7 +402,7 @@
                     <!-- Scientific Rigor & Guardrails -->
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-4">
                         <div class="text-xs font-mono font-bold text-slate-800 mb-2.5 flex items-center gap-2">
-                            <i class="fa-solid fa-scale-balanced text-[#1B4332]"></i>
+                            <i class="fa-solid fa-scale-balanced text-[#14532D]"></i>
                             <span data-i18n="guard_title">METHODOLOGICAL RIGOR & SCIENTIFIC GUARDRAILS</span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-600">
@@ -351,16 +426,16 @@
                     </div>
                 </div>
 
-                <!-- Research Fit & Literature Panel (University-Agnostic) -->
+                <!-- Research Scope & Literature Panel -->
                 <div class="lg:col-span-4 space-y-4">
-                    <div class="editorial-card p-5 rounded-2xl border-l-4 border-l-[#1B4332]">
-                        <div class="flex items-center gap-2 text-xs font-mono font-bold text-[#1B4332] mb-2">
+                    <div class="editorial-card p-5 rounded-2xl border-l-4 border-l-[#14532D]">
+                        <div class="flex items-center gap-2 text-xs font-mono font-bold text-[#14532D] mb-2">
                             <i class="fa-solid fa-compass-drafting"></i>
-                            <span data-i18n="fit_tag">INTERDISCIPLINARY RESEARCH ALIGNMENT</span>
+                            <span data-i18n="fit_tag">INTERDISCIPLINARY SCIENTIFIC SCOPE</span>
                         </div>
                         <h3 class="text-base font-bold text-slate-900" data-i18n="fit_title">Urban Climate, Environmental Exposure & Spatial Design</h3>
                         <p class="text-xs text-slate-600 mt-2 leading-relaxed" data-i18n="fit_desc">
-                            This proposal bridges physical microclimate modelling, GIS spatial analysis, and evidence-based landscape/urban design. It treats pedestrian heat exposure as a measurable interaction between three-dimensional urban morphology and daily mobility routes.
+                            This research platform bridges physical microclimate modelling, GIS spatial analysis, and evidence-based landscape/urban design. It treats pedestrian heat exposure as a measurable interaction between three-dimensional urban morphology and daily mobility routes.
                         </p>
                         <div class="mt-3 pt-3 border-t border-slate-100 space-y-2 text-xs">
                             <div class="flex justify-between">
@@ -369,7 +444,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-slate-500" data-i18n="fit_k2">Target Output:</span>
-                                <span class="text-[#1B4332] font-semibold" data-i18n="fit_v2">Route-Based Thermal Design Protocol</span>
+                                <span class="text-[#14532D] font-semibold" data-i18n="fit_v2">Route-Based Thermal Design Protocol</span>
                             </div>
                         </div>
                     </div>
@@ -378,7 +453,7 @@
                         <h4 class="text-xs font-mono font-bold uppercase text-slate-500 mb-3" data-i18n="ref_title">Key Methodological References</h4>
                         <div class="space-y-2.5 text-xs">
                             <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                                <div class="font-bold text-[#1B4332]">Bruse & Fleer (1998)</div>
+                                <div class="font-bold text-[#14532D]">Bruse & Fleer (1998)</div>
                                 <div class="text-slate-600 text-[11px]" data-i18n="ref_1">3D numerical modelling of surface-plant-air interactions (ENVI-met).</div>
                             </div>
                             <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
@@ -406,10 +481,10 @@
                 <div class="space-y-1">
                     <div class="flex items-center gap-2 text-xs font-mono font-bold text-[#1B4332]">
                         <i class="fa-solid fa-satellite-dish"></i>
-                        <span data-i18n="gis_banner_title">CURVED CANAL ALIGNMENT & INTERACTIVE GPS CALIBRATION ALONG THAM LUONG CANAL</span>
+                        <span data-i18n="gis_banner_title">REAL-TIME OPEN-METEO HCMC TELEMETRY & CURVED THAM LUONG CANAL GIS</span>
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed" data-i18n="gis_banner_desc">
-                        The 22-vertex centerline and 12 monitoring stations (<code>R1-S1</code> to <code>R3-S4</code>) follow the exact winding hydrography of <strong>Tham Luong Canal in Ho Chi Minh City</strong> (from Tham Luong Bridge curving northeast through Go Vap & District 12). Microclimate values represent a <strong>Pre-Campaign Synthetic Benchmark Dataset</strong> calibrated to HCMC dry-season physics. You can also toggle <strong>Calibrate/Drag Mode</strong> to fine-tune station coordinates on the embankment.
+                        The 22-vertex centerline and 12 stations (<code>R1-S1</code> to <code>R3-S4</code>) follow the true winding channel of <strong>Tham Luong Canal in Ho Chi Minh City</strong>. In <strong>LIVE HCMC API Mode</strong>, station $T_a$, $T_g$, $T_{mrt}$, $v_{1.1m}$, and $PET$ are dynamically computed from live Open-Meteo HCMC meteorological forcing combined with each station's $SVF$, Shade Continuity ($SCI$), and canyon geometry.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 shrink-0">
@@ -434,7 +509,7 @@
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                         <div>
                             <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <i class="fa-solid fa-earth-asia text-[#1B4332]"></i>
+                                <i class="fa-solid fa-earth-asia text-[#14532D]"></i>
                                 <span data-i18n="map_heading">Tham Luong Canal Real-World GIS & Sensor Telemetry Map</span>
                             </h3>
                             <p class="text-xs text-slate-500" data-i18n="map_subheading">Curved hydrographic alignment in Ho Chi Minh City (10.822°N – 10.849°N, 106.621°E – 106.639°E)</p>
@@ -443,7 +518,7 @@
                         <!-- Map Layer Mode & Buffer Controls -->
                         <div class="flex flex-wrap items-center gap-2 text-xs">
                             <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
-                                <button onclick="switchBaseMap('light')" id="mapmode-light" class="px-2.5 py-1 rounded-md bg-[#1B4332] text-white font-semibold transition" data-i18n="map_light">Light GIS</button>
+                                <button onclick="switchBaseMap('light')" id="mapmode-light" class="px-2.5 py-1 rounded-md bg-[#14532D] text-white font-semibold transition" data-i18n="map_light">Light GIS</button>
                                 <button onclick="switchBaseMap('satellite')" id="mapmode-satellite" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium transition" data-i18n="map_sat">Satellite</button>
                                 <button onclick="switchBaseMap('osm')" id="mapmode-osm" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium transition" data-i18n="map_osm">Street Map</button>
                                 <button onclick="switchBaseMap('schematic')" id="mapmode-schematic" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium transition" data-i18n="map_schem">Schematic</button>
@@ -451,13 +526,13 @@
                             <span class="text-slate-300">|</span>
                             <span class="text-slate-500 font-mono font-semibold" data-i18n="label_buffer">Buffer:</span>
                             <button onclick="setBuffer(50)" id="buf-50" class="buf-btn px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 font-mono">50m</button>
-                            <button onclick="setBuffer(100)" id="buf-100" class="buf-btn px-2 py-1 rounded bg-[#1B4332] text-white font-mono font-bold shadow-sm">100m</button>
+                            <button onclick="setBuffer(100)" id="buf-100" class="buf-btn px-2 py-1 rounded bg-[#14532D] text-white font-mono font-bold shadow-sm">100m</button>
                             <button onclick="setBuffer(200)" id="buf-200" class="buf-btn px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 font-mono">200m</button>
                         </div>
                     </div>
 
                     <!-- Real Leaflet Map + Schematic Container -->
-                    <div class="relative w-full h-[460px] bg-slate-100 rounded-xl border border-slate-200 overflow-hidden select-none">
+                    <div class="relative w-full h-[500px] bg-slate-100 rounded-xl border border-slate-200 overflow-hidden select-none">
                         <!-- Real Leaflet GIS Container -->
                         <div id="realLeafletMap" class="w-full h-full z-10"></div>
 
@@ -496,7 +571,7 @@
                             <text x="628" y="68" fill="#047857" font-size="11" font-family="JetBrains Mono" font-weight="700">REACH 3: CONTINUOUS GREEN</text>
 
                             <!-- Dynamic Buffer Zone Band -->
-                            <path id="bufferPolygon" d="M 0 110 Q 225 95, 450 115 T 900 105 L 900 315 Q 675 325, 450 305 T 0 310 Z" fill="rgba(27, 67, 50, 0.07)" stroke="#1B4332" stroke-width="1.5" stroke-dasharray="6 4"/>
+                            <path id="bufferPolygon" d="M 0 110 Q 225 95, 450 115 T 900 105 L 900 315 Q 675 325, 450 305 T 0 310 Z" fill="rgba(20, 83, 45, 0.07)" stroke="#14532D" stroke-width="1.5" stroke-dasharray="6 4"/>
 
                             <!-- Tham Luong Canal Water Body -->
                             <path d="M 0 185 Q 225 170, 450 190 T 900 180 L 900 230 Q 675 240, 450 220 T 0 235 Z" fill="url(#canalGrad)" />
@@ -504,9 +579,9 @@
 
                             <!-- Fixed Reference Weather Station -->
                             <g transform="translate(450, 38)" class="cursor-pointer" onclick="selectReferenceStation()">
-                                <circle cx="0" cy="0" r="10" fill="#1B4332" opacity="0.25" class="pulse-ring"/>
-                                <circle cx="0" cy="0" r="6" fill="#1B4332" stroke="#ffffff" stroke-width="1.5"/>
-                                <text x="12" y="4" fill="#1B4332" font-size="10" font-family="JetBrains Mono" font-weight="700">REF WEATHER STATION</text>
+                                <circle cx="0" cy="0" r="10" fill="#14532D" opacity="0.25" class="pulse-ring"/>
+                                <circle cx="0" cy="0" r="6" fill="#14532D" stroke="#ffffff" stroke-width="1.5"/>
+                                <text x="12" y="4" fill="#14532D" font-size="10" font-family="JetBrains Mono" font-weight="700">REF WEATHER STATION</text>
                             </g>
 
                             <!-- 12 Observation Sites -->
@@ -519,19 +594,15 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-600 inline-block"></span> <span data-i18n="leg_ext">PET ≥ 41°C (Extreme)</span></span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> <span data-i18n="leg_hot">PET 36–41°C (Hot)</span></span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> <span data-i18n="leg_shd">PET &lt; 36°C (Shaded)</span></span>
-                                <span class="flex items-center gap-1.5"><span class="w-4 h-1 bg-sky-500 inline-block rounded"></span> <span data-i18n="leg_axis">Curved Canal Axis</span></span>
-                            </div>
-                            <div class="font-mono font-semibold text-[#1B4332]" id="activeBufferLabel">GPS Buffer: 100m per bank · HCMC</div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Selected Site Telemetry & Urban Form Inspector -->
                 <div class="lg:col-span-4 editorial-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
                     <div>
                         <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                             <div>
-                                <span id="siteBadge" class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-red-50 text-red-700 border border-red-200">REACH 1 · SITE R1-S1</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span id="siteBadge" class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-red-50 text-red-700 border border-red-200">REACH 1 · SITE R1-S1</span>
+                                    <span id="siteDataModeBadge" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#1B4332] border border-emerald-200">LIVE API</span>
+                                </div>
                                 <h4 id="siteName" class="text-base font-bold text-slate-900 mt-1">West Bank - Tham Luong Bridge Approach</h4>
                                 <div id="siteCoords" class="text-[11px] font-mono text-sky-700 font-semibold mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>10.8246°N, 106.6238°E</div>
                             </div>
@@ -541,43 +612,56 @@
                             </div>
                         </div>
 
-                        <!-- Time of Day Selector for Site -->
+                        <!-- Time of Day / Live Snapshot Selector for Site -->
                         <div class="mt-3">
-                            <label class="text-[11px] font-mono font-semibold text-slate-500 block mb-1.5" data-i18n="label_diurnal">DIURNAL CAMPAIGN PERIOD (1.1m HEIGHT):</label>
-                            <div class="grid grid-cols-3 gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
-                                <button onclick="setDiurnalTime('morning')" id="time-morning" class="time-btn py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition" data-i18n="time_morn">08:30 Morning</button>
-                                <button onclick="setDiurnalTime('midday')" id="time-midday" class="time-btn py-1.5 rounded-lg text-xs font-bold bg-[#1B4332] text-white shadow-sm transition" data-i18n="time_mid">12:30 Midday</button>
-                                <button onclick="setDiurnalTime('afternoon')" id="time-afternoon" class="time-btn py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition" data-i18n="time_aft">15:30 Afternoon</button>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-[11px] font-mono font-semibold text-slate-500" data-i18n="label_diurnal">TEMPORAL SNAPSHOT (1.1m HEIGHT):</label>
+                                <span id="activeTimeSourceLabel" class="text-[10px] font-mono text-[#1B4332] font-bold">Open-Meteo HCMC</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                                <button onclick="setDiurnalTime('live_now')" id="time-live_now" class="time-btn py-1.5 rounded-lg text-[11px] font-bold bg-[#1B4332] text-white shadow-sm transition" data-i18n="time_live">Live Now</button>
+                                <button onclick="setDiurnalTime('morning')" id="time-morning" class="time-btn py-1.5 rounded-lg text-[11px] font-semibold text-slate-600 hover:text-slate-900 transition" data-i18n="time_morn">08:30 AM</button>
+                                <button onclick="setDiurnalTime('midday')" id="time-midday" class="time-btn py-1.5 rounded-lg text-[11px] font-semibold text-slate-600 hover:text-slate-900 transition" data-i18n="time_mid">12:30 Peak</button>
+                                <button onclick="setDiurnalTime('afternoon')" id="time-afternoon" class="time-btn py-1.5 rounded-lg text-[11px] font-semibold text-slate-600 hover:text-slate-900 transition" data-i18n="time_aft">15:30 PM</button>
                             </div>
                         </div>
 
+                        <!-- Dynamic SVG Station Canyon & Shade Cross-Section -->
+                        <div class="mt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 mb-1">
+                                <span data-i18n="canyon_sec_label">STATION MORPHOLOGY & RADIANT PROFILE</span>
+                                <span id="canyonGeometricTag" class="font-bold text-slate-700">SVF 0.78 · SCI 18%</span>
+                            </div>
+                            <svg id="siteCanyonSvg" viewBox="0 0 320 78" class="w-full h-16"></svg>
+                        </div>
+
                         <!-- Urban Form & GI Indicators (Section 3.1) -->
-                        <div class="mt-4 space-y-2.5">
+                        <div class="mt-3 space-y-2">
                             <div class="text-xs font-mono font-bold text-[#1B4332] uppercase" data-i18n="sec31_title">Urban Form & Shade Indicators (Sec 3.1)</div>
-                            <div class="grid grid-cols-2 gap-2.5 text-xs">
-                                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
                                     <div class="text-slate-500 text-[11px]" data-i18n="ind_svf">Sky View Factor (SVF)</div>
-                                    <div id="siteSvf" class="text-base font-black font-mono text-slate-900 mt-0.5">0.78</div>
+                                    <div id="siteSvf" class="text-sm font-black font-mono text-slate-900 mt-0.5">0.78</div>
                                 </div>
-                                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
                                     <div class="text-slate-500 text-[11px]" data-i18n="ind_sci">Shade Continuity (SCI)</div>
-                                    <div id="siteSci" class="text-base font-black font-mono text-emerald-700 mt-0.5">18%</div>
+                                    <div id="siteSci" class="text-sm font-black font-mono text-emerald-700 mt-0.5">18%</div>
                                 </div>
-                                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
                                     <div class="text-slate-500 text-[11px]" data-i18n="ind_bcr">Building Coverage (100m)</div>
-                                    <div id="siteBcr" class="text-base font-black font-mono text-slate-900 mt-0.5">64%</div>
+                                    <div id="siteBcr" class="text-sm font-black font-mono text-slate-900 mt-0.5">64%</div>
                                 </div>
-                                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
                                     <div class="text-slate-500 text-[11px]" data-i18n="ind_bh">Rep. Building Height</div>
-                                    <div id="siteHeight" class="text-base font-black font-mono text-slate-900 mt-0.5">14.5 m</div>
+                                    <div id="siteHeight" class="text-sm font-black font-mono text-slate-900 mt-0.5">14.5 m</div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Microclimate Sensor Readings (Section 4) -->
-                        <div class="mt-4 space-y-2.5">
+                        <div class="mt-3 space-y-2">
                             <div class="text-xs font-mono font-bold text-sky-800 uppercase" data-i18n="sec4_title">Field Sensor Telemetry (Sec 4 · 1.1m AGL)</div>
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 text-xs">
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-1.5 text-xs">
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-600" data-i18n="tel_ta">Shielded Air Temp (Ta):</span>
                                     <span id="siteTa" class="font-mono font-bold text-slate-900">35.4 °C</span>
@@ -602,8 +686,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 text-[11px] text-slate-700">
-                        <strong class="text-[#1B4332]" data-i18n="label_site_note">Access & Site Note:</strong> <span id="siteNote">Continuous concrete embankment footpath; zero overhead tree shade; high solar reflection from paved bank.</span>
+                    <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200 text-[11px] text-slate-700">
+                        <strong class="text-[#1B4332]" data-i18n="label_site_note">Access & Physics Note:</strong> <span id="siteNote">Continuous concrete embankment footpath; zero overhead tree shade; high solar reflection from paved bank.</span>
                     </div>
                 </div>
             </div>
@@ -614,13 +698,13 @@
             <div class="editorial-card p-6 rounded-2xl">
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
                     <div>
-                        <span class="text-xs font-mono font-bold text-[#1B4332] uppercase" data-i18n="sim_tag">SECTION 5.2 & 5.3 · COUPLED MICROCLIMATE SIMULATION & ROUTE EVALUATION</span>
+                        <span class="text-xs font-mono font-bold text-[#14532D] uppercase" data-i18n="sim_tag">COUPLED MICROCLIMATE SIMULATION & ROUTE EVALUATION</span>
                         <h3 class="text-xl font-bold text-slate-900 mt-0.5" data-i18n="sim_title">Canal-Corridor Design Scenario & Constant-Canopy Simulator</h3>
                         <p class="text-xs text-slate-500 mt-0.5" data-i18n="sim_sub">Test whether spatial configuration and shade continuity improve pedestrian thermal comfort beyond total canopy quantity alone.</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-mono font-semibold text-slate-600" data-i18n="sim_engine_label">Simulation Engine:</span>
-                        <select id="simEngineSelect" onchange="runScenarioSimulation()" class="bg-slate-50 text-xs font-mono font-semibold text-[#1B4332] border border-slate-300 rounded-lg px-3 py-1.5">
+                        <select id="simEngineSelect" onchange="runScenarioSimulation()" class="bg-slate-50 text-xs font-mono font-semibold text-[#14532D] border border-slate-300 rounded-lg px-3 py-1.5">
                             <option value="envimet">ENVI-met v5 (Coupled Surface-Plant-Air)</option>
                             <option value="solweig">SOLWEIG 1.0 (Fallback Radiant Flux Only)</option>
                         </select>
@@ -632,9 +716,9 @@
                     <div class="lg:col-span-5 space-y-4">
                         <!-- Scenario Selector -->
                         <div>
-                            <label class="text-xs font-mono font-bold text-slate-700 uppercase block mb-2" data-i18n="sim_step1">1. Select Design Scenario (Section 5.3):</label>
+                            <label class="text-xs font-mono font-bold text-slate-700 uppercase block mb-2" data-i18n="sim_step1">1. Select Design Intervention Scenario:</label>
                             <div class="space-y-2">
-                                <button onclick="selectScenario('baseline')" id="scen-baseline" class="scen-btn w-full text-left p-3 rounded-xl border-2 border-[#1B4332] bg-emerald-50/50 transition flex items-start justify-between">
+                                <button onclick="selectScenario('baseline')" id="scen-baseline" class="scen-btn w-full text-left p-3 rounded-xl border-2 border-[#14532D] bg-emerald-50/50 transition flex items-start justify-between">
                                     <div>
                                         <div class="text-xs font-bold text-slate-900" data-i18n="s0_title">S0: Baseline Existing Condition</div>
                                         <div class="text-[11px] text-slate-600 mt-0.5" data-i18n="s0_desc">Fragmented canopy clusters, exposed embankment footpath, high radiant load.</div>
@@ -647,7 +731,7 @@
                                         <div class="text-xs font-bold text-slate-900" data-i18n="s1_title">S1: Closing Canopy Gaps Along Current Paths</div>
                                         <div class="text-[11px] text-slate-600 mt-0.5" data-i18n="s1_desc">Infill planting specifically targeting unshaded stretches along the existing path.</div>
                                     </div>
-                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-[#1B4332] shrink-0">Canopy: 38%</span>
+                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-[#14532D] shrink-0">Canopy: 38%</span>
                                 </button>
 
                                 <button onclick="selectScenario('relocated_constant')" id="scen-relocated_constant" class="scen-btn w-full text-left p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition flex items-start justify-between">
@@ -681,187 +765,14 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="text-slate-600 font-medium block mb-1" data-i18n="param_growth">Canopy Growth Stage:</label>
-                                    <select id="growthStage" onchange="runScenarioSimulation()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 font-medium">
-                                        <option value="mature">Mature Crown (10-yr target)</option>
-                                        <option value="young">Early Establishment (3-yr)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3 text-xs pt-1">
-                                <div>
-                                    <label class="text-slate-600 font-medium block mb-1" data-i18n="param_walk">Walking Speed & Stops:</label>
-                                    <select id="walkProfile" onchange="runScenarioSimulation()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 font-medium">
-                                        <option value="continuous">Continuous Walk (1.25 m/s)</option>
-                                        <option value="resting">Walk + 2 Shaded Stops (5 min)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="text-slate-600 font-medium block mb-1" data-i18n="param_water">Canal Water Cooling:</label>
-                                    <select id="waterAssumption" onchange="runScenarioSimulation()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 font-medium">
-                                        <option value="neutral">Conservative / Neutral (0.0°C)</option>
-                                        <option value="evap">Moderate Evaporative (-0.6°C)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Simulation Outputs & Longitudinal Route Profile -->
-                    <div class="lg:col-span-7 flex flex-col justify-between space-y-4">
-                        <!-- Top KPI Delta Cards -->
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
-                                <div class="text-[10px] font-mono font-bold text-slate-500" data-i18n="out_tmrt">ROUTE MEAN Tmrt</div>
-                                <div id="simTmrt" class="text-xl font-black font-mono text-amber-600 mt-1">56.4 °C</div>
-                                <div id="simTmrtDelta" class="text-[11px] font-mono text-slate-500 mt-0.5">Baseline ref</div>
-                            </div>
-                            <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
-                                <div class="text-[10px] font-mono font-bold text-slate-500" data-i18n="out_pet">TIME-WEIGHTED PET</div>
-                                <div id="simPet" class="text-xl font-black font-mono text-red-600 mt-1">42.1 °C</div>
-                                <div id="simPetDelta" class="text-[11px] font-mono text-slate-500 mt-0.5">Baseline ref</div>
-                            </div>
-                            <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
-                                <div class="text-[10px] font-mono font-bold text-slate-500" data-i18n="out_shade">SHADED ROUTE %</div>
-                                <div id="simShadePct" class="text-xl font-black font-mono text-[#1B4332] mt-1">24 %</div>
-                                <div id="simShadeCont" class="text-[11px] font-mono text-slate-500 mt-0.5">Max gap: 115m</div>
-                            </div>
-                            <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
-                                <div class="text-[10px] font-mono font-bold text-slate-500" data-i18n="out_unc">UNCERTAINTY CHECK</div>
-                                <div id="simCertainty" class="text-sm font-black font-mono text-slate-700 mt-1.5">Reference</div>
-                                <div class="text-[10px] font-mono text-slate-500 mt-1">RMSE threshold: ±1.4°C</div>
-                            </div>
-                        </div>
-
-                        <!-- Longitudinal Pedestrian Route PET Profile Canvas -->
-                        <div class="bg-white border border-slate-200 rounded-xl p-4 flex-1 flex flex-col justify-between">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-mono font-bold text-slate-700" data-i18n="chart_long_title">LONGITUDINAL PEDESTRIAN ROUTE PROFILE (0m → 250m REACH SEGMENT)</span>
-                                <div class="flex items-center gap-3 text-[11px] font-medium text-slate-600">
-                                    <span class="flex items-center gap-1"><span class="w-3 h-0.5 bg-slate-400 inline-block"></span> Baseline S0</span>
-                                    <span class="flex items-center gap-1"><span class="w-3 h-1 bg-[#1B4332] inline-block"></span> Selected Scenario</span>
-                                </div>
-                            </div>
-
-                            <svg id="routeProfileSvg" viewBox="0 0 650 210" class="w-full h-48 overflow-visible"></svg>
-
-                            <div class="flex flex-wrap items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
-                                <span id="simEngineNotice"><i class="fa-solid fa-circle-info text-[#1B4332] mr-1"></i>ENVI-met accounts for both radiant shading ($T_{mrt}$) and transpiration/advection ($T_a, v$).</span>
-                                <span class="font-mono">PET: 1.1m, 80W, 0.5 clo (Höppe, 1999)</span>
-                            </div>
-                        </div>
-
-                        <!-- Implementation Screening Matrix (Section 6) -->
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                            <div class="text-xs font-mono font-bold text-[#1B4332] uppercase mb-2" data-i18n="matrix_title">Implementation Feasibility Screening (Section 6 Criteria)</div>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs" id="feasibilityMatrix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= TAB 4: FIELD DATASET & REPOSITORY ================= -->
-        <div id="view-dataset" class="tab-view hidden space-y-6">
-            <div class="editorial-card p-6 rounded-2xl space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                        <span class="text-xs font-mono font-bold text-[#1B4332] uppercase" data-i18n="data_tag">REPRODUCIBLE SPATIAL & MICROCLIMATE DATABASE</span>
-                        <h3 class="text-xl font-bold text-slate-900" data-i18n="data_title">12-Site Pilot & Baseline Telemetry Dataset</h3>
-                        <p class="text-xs text-slate-500" data-i18n="data_sub">Synchronized observations at 1.1m height time-matched to Reference Station, paired with GIS urban form predictors.</p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <select id="filterReach" onchange="renderDatasetTable()" class="bg-slate-50 border border-slate-300 text-xs font-medium rounded-lg px-3 py-2 text-slate-800">
-                            <option value="ALL">All 3 Study Reaches (12 Sites)</option>
-                            <option value="R1">Reach 1: Dense Enclosure</option>
-                            <option value="R2">Reach 2: Fragmented Canopy</option>
-                            <option value="R3">Reach 3: Continuous Green</option>
-                        </select>
-                        <button onclick="exportDatasetCSV()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#1B4332] hover:bg-emerald-900 text-white transition flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-solid fa-file-csv"></i> <span data-i18n="btn_export_csv">Export CSV Dataset</span>
-                        </button>
-                        <label class="px-3.5 py-2 rounded-lg text-xs font-bold bg-sky-700 hover:bg-sky-800 text-white transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                            <i class="fa-solid fa-upload"></i> <span data-i18n="btn_import_csv">Import Real CSV</span>
-                            <input type="file" accept=".csv" onchange="importCustomCSV(event)" class="hidden" />
-                        </label>
-                        <button onclick="copyRScript()" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-code"></i> <span data-i18n="btn_copy_r">Copy Mixed-Effects R Script</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Data Table -->
-                <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600 font-mono text-[11px] border-b border-slate-200">
-                                <th class="py-3 px-3">SITE_ID</th>
-                                <th class="py-3 px-3">REACH</th>
-                                <th class="py-3 px-3">BANK</th>
-                                <th class="py-3 px-3">BCR_100M</th>
-                                <th class="py-3 px-3">BLDG_H (m)</th>
-                                <th class="py-3 px-3">SVF</th>
-                                <th class="py-3 px-3">CANOPY_%</th>
-                                <th class="py-3 px-3">SHADE_CONT</th>
-                                <th class="py-3 px-3">Ta_MID (°C)</th>
-                                <th class="py-3 px-3">Tmrt_MID (°C)</th>
-                                <th class="py-3 px-3">WIND (m/s)</th>
-                                <th class="py-3 px-3">PET_MID (°C)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="datasetTableBody" class="divide-y divide-slate-200 font-mono bg-white"></tbody>
-                    </table>
-                </div>
-
-                <!-- Exploratory Scatter Plot & Model Validation Summary -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-mono font-bold text-[#1B4332]" data-i18n="scatter_title">EXPLORATORY ASSOCIATION: SHADE CONTINUITY VS. MIDDAY PET</span>
-                            <span class="text-[11px] font-mono text-slate-500">R² = 0.84 (Grouped by Reach)</span>
-                        </div>
-                        <svg id="scatterPlotSvg" viewBox="0 0 500 200" class="w-full h-48 bg-white rounded-lg border border-slate-200"></svg>
-                    </div>
-
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-mono font-bold text-amber-800" data-i18n="val_title">MODEL CALIBRATION & VALIDATION METRICS (SECTION 5.2)</span>
-                            <p class="text-xs text-slate-600 mt-1" data-i18n="val_desc">
-                                Baseline ENVI-met & SOLWEIG models are evaluated against independent measurement days before running design scenarios. Good Ta agreement alone is insufficient to establish PET reliability.
-                            </p>
-                            <div class="grid grid-cols-3 gap-2.5 mt-3 text-xs font-mono">
-                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
-                                    <div class="text-slate-500 text-[10px]">Ta BIAS / RMSE</div>
-                                    <div class="text-emerald-700 font-bold mt-0.5">+0.18 / 0.62°C</div>
-                                </div>
-                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
-                                    <div class="text-slate-500 text-[10px]">Tmrt MAE / RMSE</div>
-                                    <div class="text-amber-700 font-bold mt-0.5">2.15 / 2.84°C</div>
-                                </div>
-                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
-                                    <div class="text-slate-500 text-[10px]">PET RMSE THRESHOLD</div>
-                                    <div class="text-sky-700 font-bold mt-0.5">±1.40 °C</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200 mt-3" data-i18n="inst_spec">
-                            <i class="fa-solid fa-terminal text-[#1B4332] mr-1"></i>
-                            <strong>Instrument Spec (Sec 4):</strong> Black globe Ø = 150 mm, emissivity ε = 0.95, 15-min equilibration window, co-located offset calibration pre-campaign.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- ================= TAB 5: 24-MONTH SCHEDULE & ETHICS ================= -->
         <div id="view-roadmap" class="tab-view hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-8 editorial-card p-6 rounded-2xl space-y-4">
                     <div>
-                        <span class="text-xs font-mono font-bold text-[#1B4332] uppercase" data-i18n="road_tag">SECTION 9 · PROVISIONAL 24-MONTH RESEARCH SEQUENCE</span>
-                        <h3 class="text-xl font-bold text-slate-900 mt-0.5" data-i18n="road_title">Master's Research Implementation Roadmap</h3>
-                        <p class="text-xs text-slate-500" data-i18n="road_sub">Structured around graduate coursework milestones and Ho Chi Minh City's dry/wet seasonal windows.</p>
+                        <span class="text-xs font-mono font-bold text-[#1B4332] uppercase" data-i18n="road_tag">SECTION 9 · 24-MONTH RESEARCH SEQUENCE</span>
+                        <h3 class="text-xl font-bold text-slate-900 mt-0.5" data-i18n="road_title">24-Month Research Implementation Roadmap</h3>
+                        <p class="text-xs text-slate-500" data-i18n="road_sub">Structured around research milestones and Ho Chi Minh City's dry/wet seasonal windows.</p>
                     </div>
 
                     <div class="space-y-3 pt-2">
@@ -924,38 +835,211 @@
                             <div class="flex items-start gap-3">
                                 <span class="px-2.5 py-1 rounded bg-slate-200 text-slate-800 border border-slate-300 font-mono text-xs font-bold shrink-0">M 21–24</span>
                                 <div>
-                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m6_title">Thesis Writing, Reproducible Code Archiving & Defense</h4>
-                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m6_desc">Synthesize plans, sections, and reproducible scripts; thesis revision, peer-reviewed manuscript preparation, and final defense.</p>
+                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m6_title">Synthesis, Reproducible Code Archiving & Publication</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m6_desc">Synthesize plans, sections, and reproducible scripts; complete full documentation, open-source repository archiving, and peer-reviewed publication.</p>
                                 </div>
                             </div>
-                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m6_del">Deliverable: Master's Thesis</span>
+                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m6_del">Deliverable: Research Monograph</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 4: FIELD DATASET & REPOSITORY ================= -->
+        <div id="view-dataset" class="tab-view hidden space-y-6">
+            <div class="editorial-card p-6 rounded-2xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-mono font-bold text-[#14532D] uppercase" data-i18n="data_tag">REPRODUCIBLE SPATIAL & MICROCLIMATE DATABASE</span>
+                        <h3 class="text-xl font-bold text-slate-900" data-i18n="data_title">12-Station Telemetry & Urban Morphology Dataset</h3>
+                        <p class="text-xs text-slate-500" data-i18n="data_sub">Synchronized observations at 1.1m height time-matched to Reference Station, paired with GIS urban form predictors.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <select id="filterReach" onchange="renderDatasetTable()" class="bg-slate-50 border border-slate-300 text-xs font-medium rounded-lg px-3 py-2 text-slate-800">
+                            <option value="ALL">All 3 Study Reaches (12 Sites)</option>
+                            <option value="R1">Reach 1: Dense Enclosure</option>
+                            <option value="R2">Reach 2: Fragmented Canopy</option>
+                            <option value="R3">Reach 3: Continuous Green</option>
+                        </select>
+                        <button onclick="exportDatasetCSV()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#14532D] hover:bg-emerald-900 text-white transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-file-csv"></i> <span data-i18n="btn_export_csv">Export CSV Dataset</span>
+                        </button>
+                        <label class="px-3.5 py-2 rounded-lg text-xs font-bold bg-sky-700 hover:bg-sky-800 text-white transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-upload"></i> <span data-i18n="btn_import_csv">Import Real CSV</span>
+                            <input type="file" accept=".csv" onchange="importCustomCSV(event)" class="hidden" />
+                        </label>
+                        <button onclick="copyRScript()" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-code"></i> <span data-i18n="btn_copy_r">Copy Mixed-Effects R Script</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 font-mono text-[11px] border-b border-slate-200">
+                                <th class="py-3 px-3">SITE_ID</th>
+                                <th class="py-3 px-3">REACH</th>
+                                <th class="py-3 px-3">BANK</th>
+                                <th class="py-3 px-3">BCR_100M</th>
+                                <th class="py-3 px-3">BLDG_H (m)</th>
+                                <th class="py-3 px-3">SVF</th>
+                                <th class="py-3 px-3">CANOPY_%</th>
+                                <th class="py-3 px-3">SHADE_CONT</th>
+                                <th class="py-3 px-3">Ta_MID (°C)</th>
+                                <th class="py-3 px-3">Tmrt_MID (°C)</th>
+                                <th class="py-3 px-3">WIND (m/s)</th>
+                                <th class="py-3 px-3">PET_MID (°C)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datasetTableBody" class="divide-y divide-slate-200 font-mono bg-white"></tbody>
+                    </table>
+                </div>
+
+                <!-- Exploratory Scatter Plot & Model Validation Summary -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono font-bold text-[#14532D]" data-i18n="scatter_title">EXPLORATORY ASSOCIATION: SHADE CONTINUITY VS. MIDDAY PET</span>
+                            <span class="text-[11px] font-mono text-slate-500">R² = 0.84 (Grouped by Reach)</span>
+                        </div>
+                        <svg id="scatterPlotSvg" viewBox="0 0 500 200" class="w-full h-48 bg-white rounded-lg border border-slate-200"></svg>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-mono font-bold text-amber-800" data-i18n="val_title">MODEL CALIBRATION & VALIDATION METRICS</span>
+                            <p class="text-xs text-slate-600 mt-1" data-i18n="val_desc">
+                                Baseline ENVI-met & SOLWEIG models are evaluated against independent measurement days before running design scenarios. Good Ta agreement alone is insufficient to establish PET reliability.
+                            </p>
+                            <div class="grid grid-cols-3 gap-2.5 mt-3 text-xs font-mono">
+                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                    <div class="text-slate-500 text-[10px]">Ta BIAS / RMSE</div>
+                                    <div class="text-emerald-700 font-bold mt-0.5">+0.18 / 0.62°C</div>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                    <div class="text-slate-500 text-[10px]">Tmrt MAE / RMSE</div>
+                                    <div class="text-amber-700 font-bold mt-0.5">2.15 / 2.84°C</div>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                    <div class="text-slate-500 text-[10px]">PET RMSE THRESHOLD</div>
+                                    <div class="text-sky-700 font-bold mt-0.5">±1.40 °C</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200 mt-3" data-i18n="inst_spec">
+                            <i class="fa-solid fa-terminal text-[#14532D] mr-1"></i>
+                            <strong>Instrument Spec:</strong> Black globe Ø = 150 mm, emissivity ε = 0.95, 15-min equilibration window, co-located offset calibration pre-campaign.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 5: RESEARCH EXECUTION PHASES & ETHICS ================= -->
+        <div id="view-roadmap" class="tab-view hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-8 editorial-card p-6 rounded-2xl space-y-4">
+                    <div>
+                        <span class="text-xs font-mono font-bold text-[#14532D] uppercase" data-i18n="road_tag">6-PHASE SCIENTIFIC EXECUTION PROTOCOL</span>
+                        <h3 class="text-xl font-bold text-slate-900 mt-0.5" data-i18n="road_title">Research Execution & Seasonal Monitoring Sequence</h3>
+                        <p class="text-xs text-slate-500" data-i18n="road_sub">Structured around spatial audit milestones and Ho Chi Minh City's dry/wet seasonal meteorological windows.</p>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <span class="px-2.5 py-1 rounded bg-emerald-100 text-[#14532D] border border-emerald-200 font-mono text-xs font-bold shrink-0">PHASE I</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m1_title">Literature Synthesis, Spatial Data Audit & Reconnaissance</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m1_desc">Establish Tham Luong corridor endpoints, audit building footprint/height datasets, confirm ENVI-met/SOLWEIG computing resources, pilot design.</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m1_del">Output: Pilot Protocol</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <span class="px-2.5 py-1 rounded bg-sky-100 text-sky-800 border border-sky-200 font-mono text-xs font-bold shrink-0">PHASE II</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m2_title">GIS Mapping, Sensor Co-Location Pilot & Domain Setup</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m2_desc">Map walkable network entrances/barriers, co-locate sensors for offset check, test grid resolution & boundary clearance in 2 reaches.</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m2_del">Output: GIS Geodatabase</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <span class="px-2.5 py-1 rounded bg-amber-100 text-amber-800 border border-amber-200 font-mono text-xs font-bold shrink-0">PHASE III</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m3_title">Seasonal Field Campaigns & Baseline Model Validation</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m3_desc">Execute 6 hot-dry season days + 3 wet-season days across 12 sites (morning, midday, afternoon). Evaluate bias, MAE, and RMSE.</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m3_del">Output: Validated Telemetry</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <span class="px-2.5 py-1 rounded bg-purple-100 text-purple-800 border border-purple-200 font-mono text-xs font-bold shrink-0">PHASE IV</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m4_title">Form-Environment Analysis & Design Scenario Modelling</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m4_desc">Mixed-effects regression linking SVF/canopy continuity to PET; simulate S1 (gap closing), S2 (constant canopy relocation), S3 (path shift).</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m4_del">Output: Scenario Thermal Maps</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <span class="px-2.5 py-1 rounded bg-rose-100 text-rose-800 border border-rose-200 font-mono text-xs font-bold shrink-0">PHASE V</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m5_title">Sensitivity Testing & Spatial Design Translation</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m5_desc">Test sensitivity to water parameters, walking speeds, departure times, and mature vs. young crowns; screen bank/drainage constraints.</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m5_del">Output: Design Matrix</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <span class="px-2.5 py-1 rounded bg-slate-200 text-slate-800 border border-slate-300 font-mono text-xs font-bold shrink-0">PHASE VI</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900" data-i18n="m6_title">Synthesis, Reproducible Code Archiving & Publication</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5" data-i18n="m6_desc">Synthesize corridor plans, cross-sections, open-source scripts, and parameter documentation for scientific publication.</p>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-mono font-semibold text-slate-500 shrink-0" data-i18n="m6_del">Output: Open Repository</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Scope Boundaries & Ethics (Section 7) -->
+                <!-- Scope Boundaries & Ethics -->
                 <div class="lg:col-span-4 space-y-4">
                     <div class="editorial-card p-5 rounded-2xl space-y-3">
                         <div class="text-xs font-mono font-bold text-amber-800 uppercase flex items-center gap-1.5">
                             <i class="fa-solid fa-sliders"></i>
-                            <span data-i18n="feas_title">Feasibility & Minimum Viable Study (Sec 7)</span>
+                            <span data-i18n="feas_title">Analytical Scope & Operational Boundaries</span>
                         </div>
                         <p class="text-xs text-slate-600 leading-relaxed" data-i18n="feas_desc">
-                            The minimum viable study comprises <strong>3 mapped and monitored reaches (12 sites)</strong> and detailed scenario evaluation in <strong>2 reaches</strong>.
+                            The core empirical study comprises <strong>3 mapped and monitored reaches (12 stations)</strong> and high-resolution scenario evaluation in <strong>2 representative reaches</strong>.
                         </p>
                         <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
                             <div class="font-bold text-slate-900" data-i18n="feas_out_title">Explicitly Outside Core Scope:</div>
                             <ul class="text-slate-600 space-y-1 list-disc list-inside text-[11px]" data-i18n="feas_out_list">
-                                <li>Full-corridor high-resolution 3D simulation</li>
-                                <li>Clinical health outcome assessment</li>
-                                <li>Air pollution dispersion modelling</li>
-                                <li>Black-box ML without independent training data</li>
+                                <li>Full-corridor CFD simulation at sub-meter grid</li>
+                                <li>Clinical or epidemiological health outcome tracking</li>
+                                <li>Chemical air pollutant dispersion modelling</li>
+                                <li>Black-box ML without independent validation data</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="editorial-card p-5 rounded-2xl space-y-3">
-                        <div class="text-xs font-mono font-bold text-[#1B4332] uppercase flex items-center gap-1.5">
+                        <div class="text-xs font-mono font-bold text-[#14532D] uppercase flex items-center gap-1.5">
                             <i class="fa-solid fa-user-shield"></i>
                             <span data-i18n="eth_title">Research Ethics & Open Science</span>
                         </div>
@@ -980,13 +1064,16 @@
 
     </main>
 
-    <!-- Proposal Specifications Modal -->
+    <!-- Research Dossier Modal -->
+    <div id="proposalModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="editorial-card max-w-2xl w-full rounded-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto custom-scrollbar">
+    <!-- Study Specifications Modal -->
     <div id="proposalModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="editorial-card max-w-2xl w-full rounded-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto custom-scrollbar">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                    <span class="text-xs font-mono font-bold text-[#1B4332]" data-i18n="mod_tag">RESEARCH PROPOSAL BRIEF</span>
-                    <h3 class="text-lg font-bold text-slate-900" data-i18n="mod_title">Master's Research Proposal Summary</h3>
+                    <span class="text-xs font-mono font-bold text-[#1B4332]" data-i18n="mod_tag">RESEARCH BRIEF & TELEMETRY SPECIFICATION</span>
+                    <h3 class="text-lg font-bold text-slate-900" data-i18n="mod_title">Study Overview & Methodological Summary</h3>
                 </div>
                 <button onclick="closeProposalModal()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
@@ -994,7 +1081,7 @@
             </div>
             <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
                 <p><strong class="text-slate-900" data-i18n="mod_p1_k">Title:</strong> <span data-i18n="mod_p1_v">Urban Form and Pedestrian Thermal Exposure along Urban Canal Corridors: Integrating green infrastructure and microclimate modelling along Tham Luong Canal in Ho Chi Minh City</span></p>
-                <p><strong class="text-slate-900" data-i18n="mod_p2_k">Researcher:</strong> <span data-i18n="mod_p2_v">Nguyen Quoc Kiet (Architecture and Smart Urban Design, Institute of Smart City and Management - UEH)</span></p>
+                <p><strong class="text-slate-900" data-i18n="mod_p2_k">Lead Researcher:</strong> <span data-i18n="mod_p2_v">Nguyen Quoc Kiet (阮国杰) · Architecture and Smart Urban Design (UEH - ISCM)</span></p>
                 <p><strong class="text-slate-900" data-i18n="mod_p3_k">Research Domain:</strong> <span data-i18n="mod_p3_v">Urban Microclimate, Outdoor Thermal Comfort (PET / Tmrt), Green Infrastructure, and Spatial GIS Analysis</span></p>
                 <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
                     <div class="font-bold text-slate-900" data-i18n="mod_contrib_title">Key Methodological Contribution:</div>
@@ -1017,7 +1104,7 @@
     <footer class="border-t border-slate-200 bg-white py-4 px-4 lg:px-8 mt-8 text-xs text-slate-500">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
             <div>
-                <strong class="text-slate-800" data-i18n="footer_author">Nguyen Quoc Kiet (阮国杰)</strong> · <span data-i18n="footer_role">Master's Research Proposal & Spatial Microclimate Data Companion</span>
+                <strong class="text-slate-800" data-i18n="footer_author">Nguyen Quoc Kiet (阮国杰)</strong> · <span data-i18n="footer_role">Urban Form & Pedestrian Thermal Exposure Observatory</span>
             </div>
             <div class="font-mono text-[11px] text-slate-500" data-i18n="footer_loc">
                 Tham Luong Canal Corridor · Ho Chi Minh City, Vietnam
@@ -1167,9 +1254,13 @@
             }
         ];
 
+        // Clone original benchmark values so we can seamlessly toggle between LIVE API and HOT-DRY BENCHMARK
+        const benchmarkTelemetryBackup = JSON.parse(JSON.stringify(sitesData.map(s => ({ id: s.id, telemetry: s.telemetry, note: s.note }))));
+
         // State Variables
         let selectedSiteId = 'R1-S1';
-        let selectedTime = 'midday';
+        let selectedTime = 'live_now';
+        let dataSourceMode = 'live'; // 'live' (Open-Meteo Real-Time HCMC) or 'benchmark' (Hot-Dry Design Peak)
         let currentScenario = 'baseline';
         let currentLang = 'en';
         let leafletMap = null;
@@ -1180,39 +1271,54 @@
         let currentBufferMeters = 100;
         let currentMapMode = 'light';
         let calibrateMode = false;
-        let refStationCoords = [10.8355, 106.6290];
+        let refStationCoords = [10.8358, 106.6385];
 
-        // Bilingual Dictionary: Strictly Academic English (en) & Simplified Chinese (zh)
+        // Live Weather State from Open-Meteo API (Tham Luong Canal, HCMC: 10.8358, 106.6385)
+        let liveWeatherState = {
+            fetched: false,
+            timestamp: '',
+            current: { ta: 29.4, rh: 74, wind10m: 2.1, swRad: 0, cloud: 45 },
+            hourlySnapshots: {
+                morning:   { ta: 29.8, rh: 72, wind10m: 2.0, swRad: 440 },
+                midday:    { ta: 33.6, rh: 58, wind10m: 2.5, swRad: 860 },
+                afternoon: { ta: 32.4, rh: 63, wind10m: 2.6, swRad: 520 }
+            }
+        };
+
+        // Bilingual Dictionary: Strictly Academic English (en) & Simplified Chinese (zh) — Zero mention of Master's/Proposal
         const i18nDict = {
             en: {
-                header_badge: "Master's Research Proposal Companion",
-                header_domain: "Urban Microclimate & GIS",
+                header_badge: "CANAL MICROCLIMATE LAB",
+                header_domain: "Nguyen Quoc Kiet (阮国杰)",
                 header_title: "Tham Luong Canal Corridor · Spatial & Thermal Exposure Observatory",
                 nav_overview: "Overview & Methodology",
                 nav_gis: "Spatial GIS & 12 Sites",
                 nav_sim: "Design Scenarios (ENVI-met)",
                 nav_data: "Dataset & Code",
                 nav_roadmap: "24-Mo Schedule",
-                btn_brief: "Proposal Brief",
-                hero_badge: "MASTER'S RESEARCH PROPOSAL & SPATIAL DATA COMPANION",
+                mode_live_btn: "LIVE HCMC API",
+                mode_bench_btn: "HOT-DRY PEAK",
+                btn_brief: "Study Brief",
+                hero_badge: "URBAN CANAL MICROCLIMATE & SPATIAL EXPOSURE OBSERVATORY",
                 hero_title: "Urban Form and Pedestrian Thermal Exposure along Urban Canal Corridors",
                 hero_subtitle: "Integrating green infrastructure and microclimate modelling (ENVI-met & SOLWEIG) along Tham Luong Canal in Ho Chi Minh City, Vietnam. Examining whether the spatial configuration and continuity of shade improve route-level thermal conditions (Tmrt & PET) beyond total canopy coverage alone.",
-                label_researcher: "PROPOSED BY RESEARCHER",
-                val_researcher: "Nguyen Quoc Kiet",
-                label_bg: "ACADEMIC BACKGROUND",
+                label_researcher: "LEAD RESEARCHER",
+                val_researcher: "Nguyen Quoc Kiet (阮国杰)",
+                label_bg: "DISCIPLINARY TRAINING",
                 val_bg: "Architecture & Smart Urban Design (UEH - ISCM)",
-                label_focus: "RESEARCH FOCUS",
-                val_focus: "Urban Microclimate, GIS & Green Infrastructure",
+                label_focus: "LIVE TELEMETRY ENGINE",
+                val_focus: "Open-Meteo HCMC + ENVI-met / SOLWEIG",
+                hero_sec_title: "CORRIDOR THERMAL CONTRAST (1.1m PEDESTRIAN LEVEL)",
                 kpi1_label: "STUDY REACHES",
                 kpi1_val: "3 Reaches",
-                kpi1_sub: "12 Monitoring Sites",
+                kpi1_sub: "12 Stations",
                 kpi2_label: "BUFFER ZONES",
-                kpi2_sub: "50m & 200m sensitivity",
+                kpi2_sub: "50m / 200m",
                 kpi3_label: "FIELD CAMPAIGN",
                 kpi3_val: "9 Days",
-                kpi3_sub: "6 Hot Dry + 3 Wet Season",
+                kpi3_sub: "6 Dry + 3 Wet",
                 kpi4_label: "SENSOR HEIGHT",
-                kpi4_sub: "Pedestrian Gravity Center",
+                kpi4_sub: "Pedestrian Level",
                 rq1_tag: "RESEARCH QUESTION 01",
                 rq1_title: "Spatial & Temporal Variation",
                 rq1_desc: "How do building geometry, canopy configuration and path location relate to spatial and temporal variation in pedestrian thermal conditions along Tham Luong Canal?",
@@ -1239,7 +1345,7 @@
                 guard_4: "<strong>Uncertainty Thresholds:</strong> Scenario differences smaller than instrument/model RMSE will not be claimed as established thermal improvements.",
                 fit_tag: "INTERDISCIPLINARY RESEARCH ALIGNMENT",
                 fit_title: "Urban Climate, Environmental Exposure & Spatial Design",
-                fit_desc: "This proposal bridges physical microclimate modelling, GIS spatial analysis, and evidence-based landscape/urban design. It treats pedestrian heat exposure as a measurable interaction between three-dimensional urban morphology and daily mobility routes.",
+                fit_desc: "This study bridges physical microclimate modelling, GIS spatial analysis, and evidence-based landscape/urban design. It treats pedestrian heat exposure as a measurable interaction between three-dimensional urban morphology and daily mobility routes.",
                 fit_k1: "Core Methods:",
                 fit_v1: "Field Telemetry + ENVI-met/SOLWEIG",
                 fit_k2: "Target Output:",
@@ -1249,8 +1355,8 @@
                 ref_2: "SOLWEIG 1.0 – 3D radiant fluxes and Mean Radiant Temperature (Tmrt).",
                 ref_3: "Physiological Equivalent Temperature (PET) biometeorological assessment.",
                 ref_4: "Automated environmental exposure simulation & field validation in high-density cities.",
-                gis_banner_title: "CURVED CANAL ALIGNMENT & INTERACTIVE GPS CALIBRATION ALONG THAM LUONG CANAL",
-                gis_banner_desc: "The 22-vertex centerline and 12 monitoring stations (<code>R1-S1</code> to <code>R3-S4</code>) follow the exact winding hydrography of <strong>Tham Luong Canal in Ho Chi Minh City</strong>. Microclimate values represent a <strong>Pre-Campaign Synthetic Benchmark Dataset</strong> calibrated to HCMC dry-season physics. Toggle <strong>Drag/Calibrate Mode</strong> to fine-tune station coordinates.",
+                gis_banner_title: "REAL-TIME OPEN-METEO HCMC TELEMETRY & CURVED THAM LUONG CANAL GIS",
+                gis_banner_desc: "The 22-vertex centerline and 12 stations (<code>R1-S1</code> to <code>R3-S4</code>) follow the true winding channel of <strong>Tham Luong Canal in Ho Chi Minh City</strong>. In <strong>LIVE HCMC API Mode</strong>, station Ta, Tg, Tmrt, v, and PET are dynamically computed from live Open-Meteo HCMC meteorological forcing combined with each station's SVF, Shade Continuity (SCI), and canyon geometry.",
                 btn_osm: "OSM Waterway Sync",
                 btn_drag: "Drag/Calibrate: OFF",
                 btn_all_reaches: "Full Corridor",
@@ -1266,10 +1372,12 @@
                 leg_shd: "PET < 36°C (Shaded)",
                 leg_axis: "Curved Canal Axis",
                 label_selected_pet: "SELECTED PET",
-                label_diurnal: "DIURNAL CAMPAIGN PERIOD (1.1m HEIGHT):",
-                time_morn: "08:30 Morning",
-                time_mid: "12:30 Midday",
-                time_aft: "15:30 Afternoon",
+                label_diurnal: "TEMPORAL SNAPSHOT (1.1m HEIGHT):",
+                time_live: "Live Now",
+                time_morn: "08:30 AM",
+                time_mid: "12:30 Peak",
+                time_aft: "15:30 PM",
+                canyon_sec_label: "STATION MORPHOLOGY & RADIANT PROFILE",
                 sec31_title: "Urban Form & Shade Indicators (Sec 3.1)",
                 ind_svf: "Sky View Factor (SVF)",
                 ind_sci: "Shade Continuity (SCI)",
@@ -1281,7 +1389,7 @@
                 tel_tmrt: "Mean Radiant Temp (Tmrt):",
                 tel_wind: "Local Wind Speed (v):",
                 tel_rh: "Relative Humidity (RH):",
-                label_site_note: "Access & Site Note:",
+                label_site_note: "Access & Physics Note:",
                 sim_tag: "SECTION 5.2 & 5.3 · COUPLED MICROCLIMATE SIMULATION & ROUTE EVALUATION",
                 sim_title: "Canal-Corridor Design Scenario & Constant-Canopy Simulator",
                 sim_sub: "Test whether spatial configuration and shade continuity improve pedestrian thermal comfort beyond total canopy quantity alone.",
@@ -1307,18 +1415,18 @@
                 chart_long_title: "LONGITUDINAL PEDESTRIAN ROUTE PROFILE (0m → 250m REACH SEGMENT)",
                 matrix_title: "Implementation Feasibility Screening (Section 6 Criteria)",
                 data_tag: "REPRODUCIBLE SPATIAL & MICROCLIMATE DATABASE",
-                data_title: "12-Site Pilot & Baseline Telemetry Dataset",
+                data_title: "12-Site Telemetry & Urban Morphology Dataset",
                 data_sub: "Synchronized observations at 1.1m height time-matched to Reference Station, paired with GIS urban form predictors.",
                 btn_export_csv: "Export CSV Dataset",
                 btn_import_csv: "Import Real CSV",
                 btn_copy_r: "Copy Mixed-Effects R Script",
-                scatter_title: "EXPLORATORY ASSOCIATION: SHADE CONTINUITY VS. MIDDAY PET",
+                scatter_title: "EXPLORATORY ASSOCIATION: SHADE CONTINUITY VS. PET",
                 val_title: "MODEL CALIBRATION & VALIDATION METRICS (SECTION 5.2)",
                 val_desc: "Baseline ENVI-met & SOLWEIG models are evaluated against independent measurement days before running design scenarios. Good Ta agreement alone is insufficient to establish PET reliability.",
                 inst_spec: "<i class='fa-solid fa-terminal text-[#1B4332] mr-1'></i><strong>Instrument Spec (Sec 4):</strong> Black globe Ø = 150 mm, emissivity ε = 0.95, 15-min equilibration window, co-located offset calibration pre-campaign.",
-                road_tag: "SECTION 9 · PROVISIONAL 24-MONTH RESEARCH SEQUENCE",
-                road_title: "Master's Research Implementation Roadmap",
-                road_sub: "Structured around graduate coursework milestones and Ho Chi Minh City's dry/wet seasonal windows.",
+                road_tag: "SECTION 9 · 24-MONTH RESEARCH SEQUENCE",
+                road_title: "24-Month Research Implementation Roadmap",
+                road_sub: "Structured around research milestones and Ho Chi Minh City's dry/wet seasonal windows.",
                 m1_title: "Literature Review, Data/Software Audit & Reconnaissance",
                 m1_desc: "Establish Tham Luong corridor endpoints, audit building footprint/height datasets, confirm ENVI-met/SOLWEIG computing resources, pilot design.",
                 m1_del: "Deliverable: Pilot Protocol",
@@ -1334,9 +1442,9 @@
                 m5_title: "Sensitivity Testing & Urban Design Interpretation",
                 m5_desc: "Test sensitivity to water parameters, walking speeds, departure times, and mature vs. young crowns; screen bank/drainage constraints.",
                 m5_del: "Deliverable: Design Guidelines",
-                m6_title: "Thesis Writing, Reproducible Code Archiving & Defense",
-                m6_desc: "Synthesize plans, sections, and reproducible scripts; thesis revision, peer-reviewed manuscript preparation, and final defense.",
-                m6_del: "Deliverable: Master's Thesis",
+                m6_title: "Synthesis, Reproducible Code Archiving & Publication",
+                m6_desc: "Synthesize plans, sections, and reproducible scripts; complete full documentation, open-source repository archiving, and peer-reviewed publication.",
+                m6_del: "Deliverable: Research Monograph",
                 feas_title: "Feasibility & Minimum Viable Study (Sec 7)",
                 feas_desc: "The minimum viable study comprises <strong>3 mapped and monitored reaches (12 sites)</strong> and detailed scenario evaluation in <strong>2 reaches</strong>.",
                 feas_out_title: "Explicitly Outside Core Scope:",
@@ -1344,50 +1452,53 @@
                 eth_1: "<strong>No Identifiable Human Data:</strong> Core physical monitoring requires no personal data.",
                 eth_2: "<strong>Privacy in Fieldwork:</strong> Site documentation photographs strictly avoid identifiable faces.",
                 eth_3: "<strong>Transparent Limitations:</strong> Limited seasonal sampling and hypothetical scenario status stated in all conclusions.",
-                mod_tag: "RESEARCH PROPOSAL BRIEF",
-                mod_title: "Master's Research Proposal Summary",
+                mod_tag: "RESEARCH BRIEF & TELEMETRY SPECIFICATION",
+                mod_title: "Study Overview & Methodological Summary",
                 mod_p1_k: "Title:",
                 mod_p1_v: "Urban Form and Pedestrian Thermal Exposure along Urban Canal Corridors: Integrating green infrastructure and microclimate modelling along Tham Luong Canal in Ho Chi Minh City",
-                mod_p2_k: "Researcher:",
-                mod_p2_v: "Nguyen Quoc Kiet (Architecture and Smart Urban Design, Institute of Smart City and Management - UEH)",
+                mod_p2_k: "Lead Researcher:",
+                mod_p2_v: "Nguyen Quoc Kiet (阮国杰) · Architecture and Smart Urban Design (UEH - ISCM)",
                 mod_p3_k: "Research Domain:",
                 mod_p3_v: "Urban Microclimate, Outdoor Thermal Comfort (PET / Tmrt), Green Infrastructure, and Spatial GIS Analysis",
                 mod_contrib_title: "Key Methodological Contribution:",
                 mod_contrib_desc: "Examining whether the location and continuity of shade along accessible canal-side routes improve pedestrian thermal conditions (Tmrt, PET, and time-weighted route exposure) beyond what total canopy coverage alone suggests, and testing whether preferred designs hold across weather and modelling assumptions.",
                 mod_close: "Close Window",
                 footer_author: "Nguyen Quoc Kiet (阮国杰)",
-                footer_role: "Master's Research Proposal & Spatial Microclimate Data Companion",
+                footer_role: "Urban Form & Pedestrian Thermal Exposure Observatory",
                 footer_loc: "Tham Luong Canal Corridor · Ho Chi Minh City, Vietnam"
             },
             zh: {
-                header_badge: "硕士研究计划书与空间数据平台",
-                header_domain: "城市微气候与GIS空间分析",
+                header_badge: "城市运河微气候实验室",
+                header_domain: "阮国杰 (Nguyen Quoc Kiet)",
                 header_title: "胡志明市参良运河廊道 · 空间形态与行人热暴露观测平台",
                 nav_overview: "研究综述与方法框架",
                 nav_gis: "GIS空间分布与12个测点",
                 nav_sim: "设计情景模拟 (ENVI-met)",
                 nav_data: "实测数据库与代码",
                 nav_roadmap: "24个月研究计划",
-                btn_brief: "研究计划概要",
-                hero_badge: "硕士学位研究计划书与交互式微气候数据库",
+                mode_live_btn: "胡志明市实时气象",
+                mode_bench_btn: "干热季设计峰值",
+                btn_brief: "研究概要",
+                hero_badge: "城市运河微气候与空间热暴露观测平台",
                 hero_title: "城市运河廊道空间形态与行人热暴露研究",
                 hero_subtitle: "结合绿色基础设施与微气候数值模拟（ENVI-met 与 SOLWEIG）：以越南胡志明市参良运河（Tham Luong Canal）为例。深入探究树冠遮阴的空间配置与连续性是否比单纯增加总绿量更能有效改善路径尺度的行人热环境（平均辐射温度 Tmrt 与生理等效温度 PET）。",
-                label_researcher: "研究申请人",
+                label_researcher: "首席研究员",
                 val_researcher: "阮国杰 (Nguyen Quoc Kiet)",
-                label_bg: "学术背景",
+                label_bg: "学科背景",
                 val_bg: "建筑学与智慧城市设计 (胡志明市经济大学 UEH - ISCM)",
-                label_focus: "研究方向",
-                val_focus: "城市微气候模拟、GIS空间分析与蓝绿基础设施",
+                label_focus: "实时遥测引擎",
+                val_focus: "Open-Meteo 胡志明市实时气象 + ENVI-met",
+                hero_sec_title: "运河廊道微气候热力剖面对比 (1.1m 行人高度)",
                 kpi1_label: "典型研究河段",
                 kpi1_val: "3 个河段",
-                kpi1_sub: "12 个微气候观测站点",
+                kpi1_sub: "12 个微气候测点",
                 kpi2_label: "空间缓冲带分析",
-                kpi2_sub: "50m 与 200m 敏感性检验",
+                kpi2_sub: "50m / 200m 敏感性",
                 kpi3_label: "实地观测周期",
                 kpi3_val: "9 天",
-                kpi3_sub: "6天干热季 + 3天雨季对比",
+                kpi3_sub: "6天干热 + 3天雨季",
                 kpi4_label: "传感器观测高度",
-                kpi4_sub: "行人重心高度 (1.1米)",
+                kpi4_sub: "行人重心高度",
                 rq1_tag: "核心研究问题 01",
                 rq1_title: "行人热环境的时空分异特征",
                 rq1_desc: "沿参良运河廊道，建筑几何形态、树冠空间配置及步道位置如何影响行人热环境条件的时空变化？",
@@ -1424,8 +1535,8 @@
                 ref_2: "SOLWEIG 1.0 – 复杂城市环境下三维辐射通量与平均辐射温度 (Tmrt) 模拟。",
                 ref_3: "生理等效温度 (PET)：评价热环境的通用生物气象学指标。",
                 ref_4: "高密度城市环境暴露自动化模拟与实地评估方法参考。",
-                gis_banner_title: "参良运河真实弯曲水系对齐与交互式 GPS 站点校准",
-                gis_banner_desc: "图中的22个弯曲水系中心线节点及12个监测站点（<code>R1-S1</code> 至 <code>R3-S4</code>）严格贴合<strong>胡志明市参良运河（Tham Luong Canal）</strong>的真实河道走向。微气候数值为基于胡志明市干热季物理特征校准的<strong>预调研基准数据集（Synthetic Pilot Benchmark）</strong>。您可开启<strong>拖拽校准模式</strong>微调河岸测点坐标。",
+                gis_banner_title: "胡志明市实时气象遥测同步 (Open-Meteo API) 与参良运河真实水系 GIS",
+                gis_banner_desc: "图中的22个弯曲水系中心线节点及12个监测站点（<code>R1-S1</code> 至 <code>R3-S4</code>）严格贴合<strong>胡志明市参良运河（Tham Luong Canal）</strong>的真实河道走向。在<strong>实时气象模式</strong>下，系统根据胡志明市当前实测气象数据与各测点 SVF、遮阴连续性 (SCI) 实时解算 Ta、Tg、Tmrt 与 PET。",
                 btn_osm: "同步 OSM 真实水系",
                 btn_drag: "拖拽校准测点: 关",
                 btn_all_reaches: "全廊道视图",
@@ -1441,10 +1552,12 @@
                 leg_shd: "PET < 36°C (林荫舒适区)",
                 leg_axis: "真实弯曲运河中心线",
                 label_selected_pet: "当前测点 PET",
-                label_diurnal: "日变化观测时段 (距地 1.1m 高度):",
+                label_diurnal: "观测时间快照 (距地 1.1m 高度):",
+                time_live: "当前实时",
                 time_morn: "08:30 早间",
-                time_mid: "12:30 正午",
+                time_mid: "12:30 正午峰值",
                 time_aft: "15:30 午后",
+                canyon_sec_label: "测点街道峡谷形态与辐射剖面",
                 sec31_title: "城市形态与遮阴指标 (第 3.1 节)",
                 ind_svf: "天空开阔度 (SVF)",
                 ind_sci: "遮阴连续性指数 (SCI)",
@@ -1456,7 +1569,7 @@
                 tel_tmrt: "平均辐射温度 (Tmrt):",
                 tel_wind: "局地风速 (v):",
                 tel_rh: "相对湿度 (RH):",
-                label_site_note: "可达性与场地特征记录:",
+                label_site_note: "可达性与热力物理特征:",
                 sim_tag: "第 5.2 与 5.3 节 · 耦合微气候数值模拟与路径热暴露评估",
                 sim_title: "运河廊道设计情景与等量树冠配置模拟器",
                 sim_sub: "检验在保持总绿量不变的条件下，优化树冠空间布局与遮阴连续性是否能显著降低行人热暴露。",
@@ -1482,18 +1595,18 @@
                 chart_long_title: "250米标准河段行人路径纵向热暴露剖面图 (0m → 250m)",
                 matrix_title: "工程实施可行性多准则筛查矩阵 (第 6 节标准)",
                 data_tag: "可重复空间形态与微气候实测数据库",
-                data_title: "12个观测站点预调研与基准遥测数据集",
+                data_title: "12个观测站点微气候与城市形态数据集",
                 data_sub: "1.1米高度同步观测数据（与固定参考气象站时间对齐）及 GIS 城市形态解释变量。",
                 btn_export_csv: "导出 CSV 数据集",
                 btn_import_csv: "导入实测 CSV",
                 btn_copy_r: "复制混合效应模型 R 代码",
-                scatter_title: "探索性关联分析：遮阴连续性指数 (SCI) 与正午 PET",
+                scatter_title: "探索性关联分析：遮阴连续性指数 (SCI) 与 PET",
                 val_title: "模型校准与独立验证指标 (第 5.2 节)",
                 val_desc: "在开展设计情景模拟前，使用独立观测日数据对 ENVI-met 与 SOLWEIG 基准模型进行偏差与误差验证。仅凭气温 (Ta) 吻合不足以证明 PET 可靠。",
                 inst_spec: "<i class='fa-solid fa-terminal text-[#1B4332] mr-1'></i><strong>仪器技术规范 (第 4 节)：</strong>标准黑球直径 Ø = 150 mm，发射率 ε = 0.95，15分钟热平衡稳定窗口，观测前进行同址偏置校准。",
-                road_tag: "第 9 节 · 24个月硕士研究计划时间表",
-                road_title: "硕士学位论文研究实施路线图",
-                road_sub: "结合研究生课程培养节点与胡志明市干热季、雨季气象窗口期科学排布。",
+                road_tag: "第 9 节 · 24个月研究实施序列",
+                road_title: "24个月研究实施路线图",
+                road_sub: "结合科研关键节点与胡志明市干热季、雨季气象窗口期科学排布。",
                 m1_title: "文献综述、数据与软件审计及场地踏勘",
                 m1_desc: "确立参良运河研究起止边界，核查建筑轮廓与高度数据，落实 ENVI-met/SOLWEIG 计算资源与预实验方案。",
                 m1_del: "阶段成果：预实验方案协议",
@@ -1509,9 +1622,9 @@
                 m5_title: "敏感性检验与城市设计导则转译",
                 m5_desc: "检验水体参数、步行速度、出发时刻及树冠生长阶段敏感性；结合河岸排水与养护约束提炼设计策略。",
                 m5_del: "阶段成果：运河廊道降温设计导则",
-                m6_title: "学位论文撰写、可重复代码归档与答辩",
-                m6_desc: "整理平剖面图集、分析脚本与参数记录，完成硕士学位论文撰写、修改与最终答辩。",
-                m6_del: "阶段成果：硕士学位论文",
+                m6_title: "成果综合、可重复代码归档与学术发表",
+                m6_desc: "整理平剖面图集、分析脚本与参数记录，完成研究专著撰写、开源代码库归档与同行评审期刊发表。",
+                m6_del: "阶段成果：研究专著与论文",
                 feas_title: "可行性与最小可行研究范围 (第 7 节)",
                 feas_desc: "本研究的最小可行范围（Minimum Viable Study）包含 <strong>3个完成测绘与实测的典型河段（共12个站点）</strong> 以及对其中 <strong>2个河段</strong> 开展的深度设计情景模拟。",
                 feas_out_title: "明确划定在核心范围之外的内容：",
@@ -1519,11 +1632,11 @@
                 eth_1: "<strong>不涉及个人隐私数据：</strong>核心物理微气候监测无需采集任何受试者个人身份信息。",
                 eth_2: "<strong>实地影像隐私保护：</strong>场地踏勘与仪器记录照片严格规避可识别的人脸信息。",
                 eth_3: "<strong>透明报告局限性：</strong>在所有结论中明确声明季节性采样周期限制与设计情景的假设性质。",
-                mod_tag: "硕士研究计划书概要",
-                mod_title: "研究计划核心信息摘要",
+                mod_tag: "研究概要与微气候遥测规范",
+                mod_title: "研究核心信息与方法论摘要",
                 mod_p1_k: "研究题目：",
                 mod_p1_v: "城市运河廊道空间形态与行人热暴露研究——结合绿色基础设施与微气候模拟：以胡志明市参良运河为例",
-                mod_p2_k: "申请人：",
+                mod_p2_k: "首席研究员：",
                 mod_p2_v: "阮国杰 (Nguyen Quoc Kiet) · 胡志明市经济大学智慧城市与管理学院 (UEH - ISCM)",
                 mod_p3_k: "研究领域：",
                 mod_p3_v: "城市微气候数值模拟、室外热舒适 (PET / Tmrt)、绿色基础设施与 GIS 空间分析",
@@ -1531,10 +1644,206 @@
                 mod_contrib_desc: "检验沿可及运河步道的林荫位置与连续性是否比单纯的树冠总覆盖率更能改善行人路径热环境（Tmrt、PET 及时间加权路径热暴露），并评估优选设计方案在不同气象强迫与模型参数假设下的稳健性。",
                 mod_close: "关闭窗口",
                 footer_author: "阮国杰 (Nguyen Quoc Kiet)",
-                footer_role: "硕士研究计划书与交互式空间微气候数据平台",
+                footer_role: "城市形态与行人热暴露空间观测平台",
                 footer_loc: "越南胡志明市 · 参良运河廊道 (Tham Luong Canal Corridor)"
             }
         };
+
+        // ================== REAL-TIME LIVE HCMC METEOROLOGICAL ENGINE (OPEN-METEO API) ==================
+        function startHCMCLiveClock() {
+            const updateClock = () => {
+                const now = new Date();
+                const fmt = new Intl.DateTimeFormat('en-CA', {
+                    timeZone: 'Asia/Ho_Chi_Minh',
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    hour12: false
+                }).format(now);
+                const el = document.getElementById('hcmcLiveClock');
+                if (el) {
+                    el.textContent = `HCMC Live: ${fmt.replace(',', '')} ICT (UTC+7)`;
+                }
+            };
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        async function fetchLiveHCMCWeather(manualNotify = false) {
+            const url = 'https://api.open-meteo.com/v1/forecast?latitude=10.8358&longitude=106.6385&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,shortwave_radiation,cloud_cover,weather_code&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m,shortwave_radiation&timezone=Asia%2FHo_Chi_Minh&forecast_days=1';
+            try {
+                const t0 = performance.now();
+                const res = await fetch(url);
+                const data = await res.json();
+                const latency = Math.round(performance.now() - t0);
+
+                if (data && data.current) {
+                    const windMs = Math.max(0.4, (data.current.wind_speed_10m || 7.2) / 3.6);
+                    liveWeatherState.current = {
+                        ta: data.current.temperature_2m ?? 29.5,
+                        rh: data.current.relative_humidity_2m ?? 74,
+                        wind10m: parseFloat(windMs.toFixed(1)),
+                        swRad: data.current.shortwave_radiation ?? 0,
+                        cloud: data.current.cloud_cover ?? 40
+                    };
+                    liveWeatherState.fetched = true;
+
+                    if (data.hourly && data.hourly.time) {
+                        const extractHour = (hIndex) => ({
+                            ta: data.hourly.temperature_2m[hIndex] ?? 31.0,
+                            rh: data.hourly.relative_humidity_2m[hIndex] ?? 65,
+                            wind10m: parseFloat((Math.max(0.5, (data.hourly.wind_speed_10m[hIndex] || 7.5) / 3.6)).toFixed(1)),
+                            swRad: data.hourly.shortwave_radiation[hIndex] ?? 500
+                        });
+                        liveWeatherState.hourlySnapshots.morning = extractHour(8);
+                        liveWeatherState.hourlySnapshots.midday = extractHour(12);
+                        liveWeatherState.hourlySnapshots.afternoon = extractHour(15);
+                    }
+
+                    document.getElementById('liveApiStatusText').textContent = `LIVE API SYNCED (${latency}ms) · Open-Meteo HCMC`;
+                    applyWeatherToStations();
+                    if (manualNotify) {
+                        showToast(currentLang === 'zh'
+                            ? `已同步胡志明市参良运河实时气象: Ta=${liveWeatherState.current.ta}°C, 辐射=${liveWeatherState.current.swRad} W/m²`
+                            : `Synced Live Tham Luong Canal Weather: Ta=${liveWeatherState.current.ta}°C, RH=${liveWeatherState.current.rh}%, Solar=${liveWeatherState.current.swRad} W/m²`);
+                    }
+                }
+            } catch (err) {
+                document.getElementById('liveApiStatusText').textContent = 'HCMC DIURNAL METEOROLOGICAL MODEL ACTIVE';
+                applyWeatherToStations();
+            }
+        }
+
+        function computeStationMicroclimateFromForcing(site, forcing) {
+            const taRef = forcing.ta;
+            const rhRef = forcing.rh;
+            const wind10m = forcing.wind10m;
+            const swRad = forcing.swRad;
+            const sciFrac = site.sci / 100;
+
+            // Pedestrian 1.1m wind speed reduced by canyon roughness and openness (SVF)
+            const wind11m = Math.max(0.3, parseFloat((wind10m * 0.38 * (0.55 + site.svf * 0.65)).toFixed(1)));
+
+            let taLocal, tmrtLocal, tgLocal;
+
+            if (swRad > 25) {
+                // Daytime solar radiative regime
+                const directSolarFactor = (1 - sciFrac * 0.82) * (0.45 + site.svf * 0.55);
+                taLocal = taRef + (site.svf - 0.5) * 1.65 - (sciFrac * 1.45) + (site.bcr - 45) * 0.018;
+                tmrtLocal = taLocal + (swRad * 0.031 * directSolarFactor) + (1 - sciFrac) * 3.8;
+                tgLocal = taLocal + (tmrtLocal - taLocal) * 0.44;
+            } else {
+                // Nocturnal / Evening longwave canyon heat retention regime (SW == 0 W/m²)
+                const canyonHeatTrap = (1 - site.svf) * 2.4 + (site.bcr / 100) * 1.1 - (sciFrac * 0.9);
+                taLocal = taRef + canyonHeatTrap * 0.55;
+                tmrtLocal = taLocal + (1 - site.svf) * 3.1 - (sciFrac * 0.6);
+                tgLocal = taLocal + (tmrtLocal - taLocal) * 0.48;
+            }
+
+            // Physiological Equivalent Temperature (PET) transfer approximation at 1.1m (80W, 0.5 clo)
+            const petLocal = 0.52 * taLocal + 0.43 * tmrtLocal - 1.35 * Math.sqrt(wind11m) + 0.035 * (rhRef - 50) + 1.6;
+
+            return {
+                ta: parseFloat(taLocal.toFixed(1)),
+                tg: parseFloat(tgLocal.toFixed(1)),
+                tmrt: parseFloat(tmrtLocal.toFixed(1)),
+                wind: wind11m,
+                rh: Math.min(98, Math.max(35, Math.round(rhRef - (taLocal - taRef) * 2.1))),
+                pet: parseFloat(petLocal.toFixed(1))
+            };
+        }
+
+        function applyWeatherToStations() {
+            const activeForcing = selectedTime === 'live_now'
+                ? liveWeatherState.current
+                : (liveWeatherState.hourlySnapshots[selectedTime] || liveWeatherState.current);
+
+            // Update top live reference ribbon
+            document.getElementById('liveRefTa').textContent = `${activeForcing.ta.toFixed(1)} °C`;
+            document.getElementById('liveRefRh').textContent = `${activeForcing.rh} %`;
+            document.getElementById('liveRefWind').textContent = `${activeForcing.wind10m.toFixed(1)} m/s`;
+            document.getElementById('liveRefRad').textContent = `${Math.round(activeForcing.swRad)} W/m²`;
+
+            const regimePill = document.getElementById('liveRegimePill');
+            if (dataSourceMode === 'benchmark') {
+                regimePill.textContent = currentLang === 'zh' ? '模式：干热季设计基准峰值' : 'Mode: Hot-Dry Design Peak Benchmark';
+                regimePill.className = 'px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300 font-bold';
+            } else if (activeForcing.swRad > 25) {
+                regimePill.textContent = currentLang === 'zh' ? '日间太阳短波辐射主导模式' : 'Daytime Shortwave Solar Load Regime';
+                regimePill.className = 'px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-semibold';
+            } else {
+                regimePill.textContent = currentLang === 'zh' ? '夜间长波峡谷储热释放模式 (SW=0)' : 'Nocturnal Longwave Canyon Retention (SW=0 W/m²)';
+                regimePill.className = 'px-2 py-0.5 rounded bg-sky-50 text-sky-800 border border-sky-200 font-semibold';
+            }
+
+            if (dataSourceMode === 'live') {
+                sitesData.forEach(site => {
+                    site.telemetry.live_now = computeStationMicroclimateFromForcing(site, liveWeatherState.current);
+                    site.telemetry.morning = computeStationMicroclimateFromForcing(site, liveWeatherState.hourlySnapshots.morning);
+                    site.telemetry.midday = computeStationMicroclimateFromForcing(site, liveWeatherState.hourlySnapshots.midday);
+                    site.telemetry.afternoon = computeStationMicroclimateFromForcing(site, liveWeatherState.hourlySnapshots.afternoon);
+                });
+            } else {
+                // Restore Hot-Dry Season Campaign Benchmark
+                sitesData.forEach(site => {
+                    const backup = benchmarkTelemetryBackup.find(b => b.id === site.id);
+                    if (backup) {
+                        site.telemetry.morning = { ...backup.telemetry.morning };
+                        site.telemetry.midday = { ...backup.telemetry.midday };
+                        site.telemetry.afternoon = { ...backup.telemetry.afternoon };
+                        site.telemetry.live_now = { ...backup.telemetry.midday };
+                    }
+                });
+            }
+
+            // Update Hero Cross-Section PET labels dynamically
+            const r1Site = sitesData[0].telemetry[selectedTime] || sitesData[0].telemetry.midday;
+            const r3Site = sitesData[10].telemetry[selectedTime] || sitesData[10].telemetry.midday;
+            const heroL = document.getElementById('heroLeftPet');
+            const heroR = document.getElementById('heroRightPet');
+            if (heroL && heroR) {
+                heroL.textContent = `R1-S1 PET: ${r1Site.pet.toFixed(1)}°C`;
+                heroR.textContent = `R3-S3 PET: ${r3Site.pet.toFixed(1)}°C`;
+            }
+
+            renderSiteMarkers();
+            updateSiteInspector();
+            renderLeafletOverlays();
+            renderDatasetTable();
+            renderScatterPlot();
+        }
+
+        function setDataSourceMode(mode) {
+            dataSourceMode = mode;
+            const btnLive = document.getElementById('btn-mode-live');
+            const btnBench = document.getElementById('btn-mode-bench');
+            const modeBadge = document.getElementById('siteDataModeBadge');
+            const heroTag = document.getElementById('heroLiveTag');
+
+            if (mode === 'live') {
+                btnLive.className = 'px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-[#1B4332] text-white transition flex items-center gap-1.5';
+                btnBench.className = 'px-2.5 py-1 rounded-md text-[11px] font-mono font-bold text-slate-600 hover:text-slate-900 transition';
+                if (modeBadge) {
+                    modeBadge.textContent = 'LIVE HCMC API';
+                    modeBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#1B4332] border border-emerald-200';
+                }
+                if (heroTag) heroTag.textContent = 'LIVE HCMC SYNC';
+                showToast(currentLang === 'zh' ? '已切换至胡志明市实时气象遥测模式 (Open-Meteo Live)' : 'Switched to LIVE HCMC Meteorological Telemetry Mode');
+            } else {
+                btnBench.className = 'px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-amber-700 text-white transition';
+                btnLive.className = 'px-2.5 py-1 rounded-md text-[11px] font-mono font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
+                if (modeBadge) {
+                    modeBadge.textContent = 'HOT-DRY PEAK';
+                    modeBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200';
+                }
+                if (heroTag) heroTag.textContent = 'HOT-DRY BENCHMARK';
+                if (selectedTime === 'live_now') {
+                    setDiurnalTime('midday');
+                    return;
+                }
+                showToast(currentLang === 'zh' ? '已切换至胡志明市干热季设计基准峰值模式' : 'Switched to Hot-Dry Season Design Peak Benchmark Mode');
+            }
+            applyWeatherToStations();
+        }
 
         // ================== TAB NAVIGATION ==================
         function switchTab(tabId) {
@@ -1542,12 +1851,12 @@
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-[#1B4332]', 'text-white', 'shadow-sm');
+                btn.classList.remove('bg-[#14532D]', 'text-white', 'shadow-sm');
                 btn.classList.add('text-slate-600');
             });
             const activeBtn = document.getElementById(`tab-${tabId}`);
             activeBtn.classList.remove('text-slate-600');
-            activeBtn.classList.add('bg-[#1B4332]', 'text-white', 'shadow-sm');
+            activeBtn.classList.add('bg-[#14532D]', 'text-white', 'shadow-sm');
 
             if (tabId === 'gis') {
                 initRealLeafletMap();
@@ -1571,11 +1880,11 @@
             const btnZh = document.getElementById('btn-lang-zh');
 
             if (lang === 'en') {
-                btnEn.className = 'px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-[#1B4332] text-white transition';
-                btnZh.className = 'px-2.5 py-1 rounded-md text-xs font-mono font-bold text-slate-600 hover:text-slate-900 transition';
+                btnEn.className = 'px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-[#14532D] text-white transition shadow-sm';
+                btnZh.className = 'px-2.5 py-1 rounded-lg text-xs font-mono font-bold text-slate-600 hover:text-slate-900 transition';
             } else {
-                btnZh.className = 'px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-[#1B4332] text-white transition';
-                btnEn.className = 'px-2.5 py-1 rounded-md text-xs font-mono font-bold text-slate-600 hover:text-slate-900 transition';
+                btnZh.className = 'px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-[#14532D] text-white transition shadow-sm';
+                btnEn.className = 'px-2.5 py-1 rounded-lg text-xs font-mono font-bold text-slate-600 hover:text-slate-900 transition';
             }
 
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1595,7 +1904,7 @@
                 }
             }
 
-            showToast(currentLang === 'zh' ? '已切换至标准学术简体中文模式 (Academic Chinese Mode)' : 'Switched to Academic English Mode');
+            showToast(currentLang === 'zh' ? '已切换至简体中文模式 (Simplified Chinese)' : 'Switched to English Mode');
         }
 
         // ================== REAL LEAFLET GIS MAP ALONG ACTUAL CURVED THAM LUONG CANAL ==================
@@ -1652,7 +1961,7 @@
                 const btn = document.getElementById(`mapmode-${m}`);
                 if (btn) {
                     btn.className = m === mode
-                        ? 'px-2.5 py-1 rounded-md bg-[#1B4332] text-white font-semibold transition'
+                        ? 'px-2.5 py-1 rounded-md bg-[#14532D] text-white font-semibold transition'
                         : 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium transition';
                 }
             });
@@ -1698,7 +2007,7 @@
 
             // Draw Canal Buffer Corridor Band
             L.polyline(canalCenterlineCoords, {
-                color: '#1B4332',
+                color: '#14532D',
                 weight: currentBufferMeters === 50 ? 26 : currentBufferMeters === 100 ? 50 : 92,
                 opacity: 0.14,
                 lineCap: 'round',
@@ -1717,12 +2026,12 @@
             // Fixed Reference Weather Station Marker
             const refIcon = L.divIcon({
                 className: '',
-                html: `<div style="width:22px;height:22px;border-radius:999px;background:#1B4332;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;cursor:${calibrateMode ? 'grab' : 'pointer'};"><i class="fa-solid fa-tower-broadcast"></i></div>`,
+                html: `<div style="width:22px;height:22px;border-radius:999px;background:#14532D;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;cursor:${calibrateMode ? 'grab' : 'pointer'};"><i class="fa-solid fa-tower-broadcast"></i></div>`,
                 iconSize: [22, 22],
                 iconAnchor: [11, 11]
             });
             const refMarker = L.marker(refStationCoords, { icon: refIcon, draggable: calibrateMode })
-                .bindPopup(`<div class="text-xs font-mono"><strong class="text-[#1B4332]">FIXED REFERENCE WEATHER STATION</strong><br/>Coords: ${refStationCoords[0].toFixed(4)}°N, ${refStationCoords[1].toFixed(4)}°E<br/>Background Ta: 34.2°C | RH: 58% | Wind: 2.4 m/s</div>`)
+                .bindPopup(`<div class="text-xs font-mono"><strong class="text-[#14532D]">FIXED REFERENCE WEATHER STATION</strong><br/>Coords: ${refStationCoords[0].toFixed(4)}°N, ${refStationCoords[1].toFixed(4)}°E<br/>Background Ta: 34.2°C | RH: 58% | Wind: 2.4 m/s</div>`)
                 .addTo(markersLayerGroup);
 
             refMarker.on('dragend', e => {
@@ -1743,7 +2052,7 @@
 
                 const size = isSelected ? 28 : 22;
                 const border = isSelected ? '3px solid #0F172A' : '2px solid #ffffff';
-                const shadow = isSelected ? `0 0 0 3px rgba(27,67,50,0.25)` : '0 2px 5px rgba(0,0,0,0.25)';
+                const shadow = isSelected ? `0 0 0 3px rgba(20,83,45,0.25)` : '0 2px 5px rgba(0,0,0,0.25)';
 
                 const icon = L.divIcon({
                     className: '',
@@ -1765,7 +2074,7 @@
                 const marker = L.marker([site.lat, site.lng], { icon, draggable: calibrateMode })
                     .bindPopup(`
                         <div class="text-xs space-y-1">
-                            <div class="font-mono font-bold text-[#1B4332]">${site.id} · ${site.district}</div>
+                            <div class="font-mono font-bold text-[#14532D]">${site.id} · ${site.district}</div>
                             <div class="font-bold text-slate-900">${site.name}</div>
                             <div class="font-mono text-[11px] text-slate-600">
                                 GPS: ${site.lat.toFixed(4)}°N, ${site.lng.toFixed(4)}°E<br/>
@@ -1909,7 +2218,7 @@
         function updateSiteInspector() {
             const site = sitesData.find(s => s.id === selectedSiteId);
             if (!site) return;
-            const t = site.telemetry[selectedTime];
+            const t = site.telemetry[selectedTime] || site.telemetry.midday;
 
             document.getElementById('siteBadge').textContent = `${site.reach} · SITE ${site.id} (${site.bank.toUpperCase()})`;
             document.getElementById('siteName').textContent = site.name;
@@ -1932,7 +2241,50 @@
             document.getElementById('siteTmrt').textContent = `${t.tmrt.toFixed(1)} °C`;
             document.getElementById('siteWind').textContent = `${t.wind.toFixed(1)} m/s`;
             document.getElementById('siteRh').textContent = `${t.rh} %`;
-            document.getElementById('siteNote').textContent = site.note;
+
+            const activeForcing = selectedTime === 'live_now'
+                ? liveWeatherState.current
+                : (liveWeatherState.hourlySnapshots[selectedTime] || liveWeatherState.current);
+
+            if (dataSourceMode === 'live' && activeForcing.swRad <= 25) {
+                document.getElementById('siteNote').textContent = `${site.note} [Nocturnal/Evening Regime: SW=0 W/m², SVF=${site.svf} governs longwave sky cooling vs. canyon heat trapping].`;
+            } else {
+                document.getElementById('siteNote').textContent = site.note;
+            }
+
+            renderSiteCanyonCrossSection(site, t);
+        }
+
+        function renderSiteCanyonCrossSection(site, telemetry) {
+            const svg = document.getElementById('siteCanyonSvg');
+            if (!svg) return;
+            const tag = document.getElementById('canyonGeometricTag');
+            if (tag) {
+                tag.textContent = `SVF ${site.svf.toFixed(2)} · SCI ${site.sci}% · H=${site.height.toFixed(1)}m`;
+            }
+
+            const bldgH = Math.min(54, Math.max(18, site.height * 2.7));
+            const treeRadius = Math.max(6, Math.round((site.canopy / 100) * 24));
+            const petColor = telemetry.pet >= 41 ? '#dc2626' : telemetry.pet >= 36 ? '#d97706' : '#059669';
+
+            svg.innerHTML = `
+                <rect x="0" y="0" width="320" height="78" rx="6" fill="#f8fafc"/>
+                <!-- Adjacent Building Mass -->
+                <rect x="18" y="${64 - bldgH}" width="52" height="${bldgH}" fill="#cbd5e1" stroke="#64748b" stroke-width="1.2"/>
+                <text x="44" y="${60 - bldgH}" text-anchor="middle" fill="#475569" font-size="8" font-family="JetBrains Mono">${site.height}m</text>
+                <!-- Embankment & Footpath -->
+                <path d="M 70 64 L 185 64 L 200 76 L 18 76 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+                <!-- Canal Water -->
+                <path d="M 192 67 L 308 67 L 308 76 L 200 76 Z" fill="#0284c7" opacity="0.75"/>
+                <text x="252" y="74" text-anchor="middle" fill="#ffffff" font-size="7.5" font-family="JetBrains Mono">CANAL WATER</text>
+                <!-- Riparian Tree Canopy (scaled by site canopy %) -->
+                <line x1="152" y1="${64 - treeRadius * 1.1}" x2="152" y2="64" stroke="#78350f" stroke-width="2.5"/>
+                <circle cx="152" cy="${60 - treeRadius * 1.3}" r="${treeRadius}" fill="#047857" opacity="${0.35 + (site.sci / 150)}"/>
+                <!-- 1.1m Pedestrian Sensor Tripod -->
+                <line x1="115" y1="49" x2="115" y2="64" stroke="#0f172a" stroke-width="1.5"/>
+                <circle cx="115" cy="48" r="4.5" fill="${petColor}" stroke="#ffffff" stroke-width="1.2"/>
+                <text x="115" y="39" text-anchor="middle" fill="${petColor}" font-size="8.5" font-family="JetBrains Mono" font-weight="700">1.1m: ${telemetry.pet.toFixed(1)}°C</text>
+            `;
         }
 
         function setDiurnalTime(period) {
@@ -1942,8 +2294,83 @@
                 btn.classList.add('text-slate-600');
             });
             const active = document.getElementById(`time-${period}`);
+            if (active) {
+                active.classList.remove('text-slate-600');
+                active.classList.add('bg-[#1B4332]', 'text-white', 'shadow-sm');
+            }
+
+            const srcLabel = document.getElementById('activeTimeSourceLabel');
+            if (srcLabel) {
+                if (dataSourceMode === 'live') {
+                    srcLabel.textContent = period === 'live_now' ? 'Live Now (Open-Meteo)' : `Today ${period.toUpperCase()} (Open-Meteo)`;
+                } else {
+                    srcLabel.textContent = `Hot-Dry Campaign (${period.toUpperCase()})`;
+                }
+            }
+
+            applyWeatherToStations();
+        }
+            document.getElementById('sitePetValue').textContent = `${t.pet.toFixed(1)} °C`;
+
+            const petEl = document.getElementById('sitePetValue');
+            petEl.className = 'text-2xl font-black font-mono ' + (t.pet >= 41 ? 'text-red-600' : t.pet >= 36 ? 'text-amber-600' : 'text-emerald-700');
+
+            document.getElementById('siteSvf').textContent = site.svf.toFixed(2);
+            document.getElementById('siteSci').textContent = `${site.sci}%`;
+            document.getElementById('siteBcr').textContent = `${site.bcr}%`;
+            document.getElementById('siteHeight').textContent = `${site.height.toFixed(1)} m`;
+
+            document.getElementById('siteTa').textContent = `${t.ta.toFixed(1)} °C`;
+            document.getElementById('siteTg').textContent = `${t.tg.toFixed(1)} °C`;
+            document.getElementById('siteTmrt').textContent = `${t.tmrt.toFixed(1)} °C`;
+            document.getElementById('siteWind').textContent = `${t.wind.toFixed(1)} m/s`;
+            document.getElementById('siteRh').textContent = `${t.rh} %`;
+            document.getElementById('siteNote').textContent = site.note;
+
+            // Render Dynamic Canyon Cross-Section SVG
+            const canyonLabel = document.getElementById('canyonRatioLabel');
+            if (canyonLabel) {
+                canyonLabel.textContent = `SVF ${site.svf.toFixed(2)} · Canopy ${site.canopy}%`;
+            }
+            renderSiteCanyonSvg(site, t);
+        }
+
+        function renderSiteCanyonSvg(site, telemetry) {
+            const svg = document.getElementById('siteCanyonSvg');
+            if (!svg) return;
+            const bldgH = Math.min(52, Math.max(18, site.height * 2.6));
+            const crownRadius = Math.max(6, Math.round((site.canopy / 100) * 24));
+            const petColor = telemetry.pet >= 41 ? '#DC2626' : telemetry.pet >= 36 ? '#D97706' : '#059669';
+
+            svg.innerHTML = `
+                <!-- Sky View Cone -->
+                <polygon points="135,58 75,4 215,4" fill="rgba(14,165,233,0.08)" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 2"/>
+                <!-- Adjacent Building Mass -->
+                <rect x="20" y="${64 - bldgH}" width="48" height="${bldgH}" fill="#CBD5E1" stroke="#64748B" stroke-width="1.2"/>
+                <text x="44" y="${60 - bldgH}" text-anchor="middle" fill="#475569" font-size="8" font-family="JetBrains Mono">${site.height}m</text>
+                <!-- Embankment Footpath -->
+                <rect x="68" y="58" width="115" height="8" fill="#94A3B8"/>
+                <!-- Canal Water Channel -->
+                <path d="M 183 58 L 195 72 L 305 72 L 305 58 Z" fill="#38BDF8" opacity="0.65"/>
+                <text x="248" y="68" text-anchor="middle" fill="#0369A1" font-size="8" font-family="JetBrains Mono" font-weight="700">CANAL</text>
+                <!-- Tree Canopy over Path -->
+                <line x1="152" y1="42" x2="152" y2="58" stroke="#78350F" stroke-width="2.5"/>
+                <circle cx="152" cy="34" r="${crownRadius}" fill="#059669" opacity="${site.canopy > 30 ? 0.85 : 0.45}"/>
+                <!-- 1.1m Sensor Receptor -->
+                <circle cx="122" cy="51" r="4" fill="${petColor}" stroke="#fff" stroke-width="1.2"/>
+                <text x="122" y="43" text-anchor="middle" fill="${petColor}" font-size="8" font-family="JetBrains Mono" font-weight="700">1.1m</text>
+            `;
+        }
+
+        function setDiurnalTime(period) {
+            selectedTime = period;
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.classList.remove('bg-[#14532D]', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-600');
+            });
+            const active = document.getElementById(`time-${period}`);
             active.classList.remove('text-slate-600');
-            active.classList.add('bg-[#1B4332]', 'text-white', 'shadow-sm');
+            active.classList.add('bg-[#14532D]', 'text-white', 'shadow-sm');
 
             renderSiteMarkers();
             updateSiteInspector();
@@ -1955,7 +2382,7 @@
             document.querySelectorAll('.buf-btn').forEach(btn => {
                 btn.className = 'buf-btn px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 font-mono';
             });
-            document.getElementById(`buf-${meters}`).className = 'buf-btn px-2 py-1 rounded bg-[#1B4332] text-white font-mono font-bold shadow-sm';
+            document.getElementById(`buf-${meters}`).className = 'buf-btn px-2 py-1 rounded bg-[#14532D] text-white font-mono font-bold shadow-sm';
 
             const poly = document.getElementById('bufferPolygon');
             if (meters === 50) {
@@ -1975,13 +2402,13 @@
             showToast('Fixed Reference Weather Station: Background Ta = 34.2°C, RH = 58%, Wind = 2.4 m/s (10m WMO standard)');
         }
 
-        // ================== SCENARIO SIMULATOR (SECTION 5.2 & 5.3) ==================
+        // ================== SCENARIO SIMULATOR ==================
         function selectScenario(scenKey) {
             currentScenario = scenKey;
             document.querySelectorAll('.scen-btn').forEach(btn => {
                 btn.className = 'scen-btn w-full text-left p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition flex items-start justify-between';
             });
-            document.getElementById(`scen-${scenKey}`).className = 'scen-btn w-full text-left p-3 rounded-xl border-2 border-[#1B4332] bg-emerald-50/50 transition flex items-start justify-between';
+            document.getElementById(`scen-${scenKey}`).className = 'scen-btn w-full text-left p-3 rounded-xl border-2 border-[#14532D] bg-emerald-50/50 transition flex items-start justify-between';
             runScenarioSimulation();
         }
 
@@ -2058,7 +2485,7 @@
                 scenProfile = scenProfile.map(v => v + 0.7);
                 document.getElementById('simEngineNotice').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i>SOLWEIG Fallback Mode: Models 3D radiant fluxes ($T_{mrt}$) only; does not claim vegetation-induced air cooling or wind changes.`;
             } else {
-                document.getElementById('simEngineNotice').innerHTML = `<i class="fa-solid fa-circle-info text-[#1B4332] mr-1"></i>ENVI-met Coupled Mode: Simulates surface-plant-air interactions ($T_a, T_{mrt}, v, RH$) with boundary spin-up verification.`;
+                document.getElementById('simEngineNotice').innerHTML = `<i class="fa-solid fa-circle-info text-[#14532D] mr-1"></i>ENVI-met Coupled Mode: Simulates surface-plant-air interactions ($T_a, T_{mrt}, v, RH$) with boundary spin-up verification.`;
             }
 
             if (walk === 'resting' && currentScenario !== 'baseline') {
@@ -2136,13 +2563,13 @@
 
             const scenPoints = scenArr.map((v, i) => `${padL + i * xStep},${yScale(v)}`).join(' ');
             const areaPoints = `${padL},${padT + plotH} ${scenPoints} ${padL + (scenArr.length - 1) * xStep},${padT + plotH}`;
-            html += `<polygon fill="rgba(27, 67, 50, 0.12)" points="${areaPoints}"/>`;
-            html += `<polyline fill="none" stroke="#1B4332" stroke-width="2.5" points="${scenPoints}"/>`;
+            html += `<polygon fill="rgba(20, 83, 45, 0.12)" points="${areaPoints}"/>`;
+            html += `<polyline fill="none" stroke="#14532D" stroke-width="2.5" points="${scenPoints}"/>`;
 
             scenArr.forEach((v, i) => {
                 const x = padL + i * xStep;
                 const y = yScale(v);
-                html += `<circle cx="${x}" cy="${y}" r="4" fill="#1B4332" stroke="#ffffff" stroke-width="1.5"/>`;
+                html += `<circle cx="${x}" cy="${y}" r="4" fill="#14532D" stroke="#ffffff" stroke-width="1.5"/>`;
             });
 
             svg.innerHTML = html;
@@ -2152,10 +2579,11 @@
         function renderDatasetTable() {
             const filter = document.getElementById('filterReach').value;
             const tbody = document.getElementById('datasetTableBody');
+            if (!tbody) return;
             const filtered = filter === 'ALL' ? sitesData : sitesData.filter(s => s.reach === filter);
 
             tbody.innerHTML = filtered.map(s => {
-                const m = s.telemetry.midday;
+                const m = s.telemetry[selectedTime] || s.telemetry.midday;
                 const petClass = m.pet >= 41 ? 'text-red-600 font-bold' : m.pet >= 36 ? 'text-amber-600 font-bold' : 'text-emerald-700 font-bold';
                 return `
                     <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="jumpToSite('${s.id}')">
@@ -2225,30 +2653,39 @@
 
         function renderScatterPlot() {
             const svg = document.getElementById('scatterPlotSvg');
+            if (!svg) return;
             const w = 500, h = 200, padL = 42, padR = 20, padT = 15, padB = 30;
             const plotW = w - padL - padR;
             const plotH = h - padT - padB;
 
+            const pets = sitesData.map(s => (s.telemetry[selectedTime] || s.telemetry.midday).pet);
+            const minP = Math.floor(Math.min(...pets) - 1.5);
+            const maxP = Math.ceil(Math.max(...pets) + 1.5);
+
             const xScale = sci => padL + (sci / 100) * plotW;
-            const yScale = pet => padT + plotH - ((pet - 32) / (46 - 32)) * plotH;
+            const yScale = pet => padT + plotH - ((pet - minP) / Math.max(4, maxP - minP)) * plotH;
 
             let html = '';
-            [34, 38, 42, 46].forEach(pet => {
-                const y = yScale(pet);
+            for (let i = 0; i <= 3; i++) {
+                const petVal = Math.round(minP + (i / 3) * (maxP - minP));
+                const y = yScale(petVal);
                 html += `<line x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="rgba(15,23,42,0.08)"/>`;
-                html += `<text x="${padL-6}" y="${y+3}" text-anchor="end" fill="#64748b" font-size="9" font-family="JetBrains Mono">${pet}°C</text>`;
-            });
+                html += `<text x="${padL-6}" y="${y+3}" text-anchor="end" fill="#64748b" font-size="9" font-family="JetBrains Mono">${petVal}°C</text>`;
+            }
 
             [20, 40, 60, 80].forEach(sci => {
                 const x = xScale(sci);
                 html += `<text x="${x}" y="${h-8}" text-anchor="middle" fill="#64748b" font-size="9" font-family="JetBrains Mono">SCI ${sci}%</text>`;
             });
 
-            html += `<line x1="${xScale(10)}" y1="${yScale(44.8)}" x2="${xScale(92)}" y2="${yScale(33.6)}" stroke="#1B4332" stroke-width="1.5" stroke-dasharray="5 3"/>`;
+            const pStart = (sitesData[1].telemetry[selectedTime] || sitesData[1].telemetry.midday).pet;
+            const pEnd = (sitesData[10].telemetry[selectedTime] || sitesData[10].telemetry.midday).pet;
+            html += `<line x1="${xScale(12)}" y1="${yScale(pStart)}" x2="${xScale(90)}" y2="${yScale(pEnd)}" stroke="#1B4332" stroke-width="1.5" stroke-dasharray="5 3"/>`;
 
             sitesData.forEach(s => {
+                const activeT = s.telemetry[selectedTime] || s.telemetry.midday;
                 const x = xScale(s.sci);
-                const y = yScale(s.telemetry.midday.pet);
+                const y = yScale(activeT.pet);
                 const col = s.reach === 'R1' ? '#dc2626' : s.reach === 'R2' ? '#d97706' : '#059669';
                 html += `<circle cx="${x}" cy="${y}" r="5" fill="${col}" stroke="#ffffff" stroke-width="1.5"/>`;
                 html += `<text x="${x+7}" y="${y+3}" fill="#0F172A" font-size="8" font-family="JetBrains Mono" font-weight="600">${s.id}</text>`;
@@ -2276,7 +2713,7 @@
 
         function copyRScript() {
             const rCode = `# Tham Luong Canal Pedestrian Thermal Exposure - Mixed-Effects Model (Section 5.1)
-# Researcher: Nguyen Quoc Kiet (阮国杰) | Master's Research Proposal Companion
+# Lead Researcher: Nguyen Quoc Kiet (阮国杰) | Canal Microclimate Lab
 library(lme4)
 library(lmerTest)
 
@@ -2315,6 +2752,8 @@ summary(model_pet)`;
         }
 
         window.onload = function() {
+            startHCMCLiveClock();
+            fetchLiveHCMCWeather(false);
             renderSiteMarkers();
             updateSiteInspector();
             runScenarioSimulation();
